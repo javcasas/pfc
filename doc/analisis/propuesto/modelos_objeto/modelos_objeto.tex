@@ -1,0 +1,913 @@
+\chapter{Modelos Objeto}
+\section{Nivel de geometría}
+Este nivel se ha propuesto principalmente como un mecanismo para almacenar y procesar geometría, y ha sido organizado según el modelo de datos de almacenamiento de geometría. En los sistemas más sencillos, la geometría a nivel de polígono tan solo debe ser consultada para pintarla en pantalla. Por ello no se contemplan operaciones complejas y raras, como pueden ser deformaciones dinámicas y operaciones CSG (Geometría Sólida Constructiva).
+
+\begin{figure}[htp]
+\centering
+%\includegraphics[width=14cm]{analisis/propuesto/modelos_objeto/geometria/clases.eps}
+\includegraphics[width=14cm]{diagramas/analisis/geometria-clases.eps}
+\caption{Diagrama de clases de análisis del nivel de Geometría}
+\end{figure}
+
+
+Aún así, este es el modelo abstracto, y puede ser extendido para soportar otras operaciones.
+A continuación se describirá la utilidad de cada clase:
+
+\subsection{Coordenada}
+Almacena una coordenada en el espacio 3D.
+\begin{itemize}
+\item \textbf{Responsabilidades:}
+	\begin{itemize}
+	\item Almacenar una coordenada del espacio.
+	\end{itemize}
+\item \textbf{Relaciones:}
+	\begin{itemize}
+	\item -valor : vector3 \newline
+		Vector con las coordenadas almacenadas.
+	\end{itemize}
+\item \textbf{Métodos:}
+	\begin{itemize}
+	\item \emph{+creación}(v:vector3) : coordenada \newline
+		Hace una coordenada nueva con valor v.
+	\item +valor() : vector3 \newline
+		Vector con las coordenadas almacenadas.
+	\end{itemize}
+\end{itemize}
+
+\subsection{Normal}
+Almacena una dirección normal.
+\begin{itemize}
+\item \textbf{Responsabilidades:}
+	\begin{itemize}
+	\item Almacenar una dirección normal.
+	\item Mantener dicha dirección normal unitaria (vector de longitud 1).
+	\end{itemize}
+\item \textbf{Relaciones:}
+	\begin{itemize}
+	\item -valor : vector3 \newline
+		Vector con la normal almacenada.
+	\end{itemize}
+\item \textbf{Métodos:}
+	\begin{itemize}
+	\item \emph{+creación}(v:vector3) : normal \newline
+		Hace una normal nueva con valor v.
+	\item +valor() : vector3 \newline
+		Vector con la normal.
+	\end{itemize}
+\end{itemize}
+
+\subsection{Color}
+Almacena un color. El color se almacena en formato RGBA, esto es, las componentes de los vectores representan los colores en orden Rojo, Verde, Azul, Alfa, donde Alfa es el valor de transparencia. Los valores pueden variar en el intervalo [0..1], donde 0 es intensidad nula y 1 es intensidad máxima. Para el valor de Alfa, 1 significa completamente opaco y 0 significa completamente transparente.
+\begin{itemize}
+\item \textbf{Responsabilidades:}
+	\begin{itemize}
+	\item Almacenar un color.
+	\item Almacenar un valor de transparencia.
+	\end{itemize}
+\item \textbf{Relaciones:}
+	\begin{itemize}
+	\item -valor : vector4 \newline
+		Vector con el color en formato RGBA.
+	\end{itemize}
+\item \textbf{Métodos:}
+	\begin{itemize}
+	\item \emph{+creación}(v:vector4) : color \newline
+		Hace un color nuevo con valor v.
+	\item +valor() : vector4 \newline
+		Vector con el color en formato RGBA.
+	\end{itemize}
+\end{itemize}
+
+\subsection{UV}
+Almacena una coordenada UV o de texturizado.
+
+Restricción: Para cada vértice de un determinado polígono debe haber tantas coordenadas UV como capas tenga el polígono.
+
+\begin{itemize}
+\item \textbf{Responsabilidades:}
+	\begin{itemize}
+	\item Almacenar una coordenada de texturizado.
+	\end{itemize}
+\item \textbf{Relaciones:}
+	\begin{itemize}
+	\item -valor : vector2 \newline
+		Vector con la coordenada UV.
+	\end{itemize}
+\item \textbf{Métodos:}
+	\begin{itemize}
+	\item \emph{+creación}(v:vector2) : UV \newline
+		Hace una UV nueva con valor v.
+	\item +valor() : vector2 \newline
+		Vector con la coordenada UV.
+	\end{itemize}
+\end{itemize}
+
+\subsection{Material}
+Almacena el material del que está compuesta la suerficie de un polígono.
+\begin{itemize}
+\item \textbf{Responsabilidades:}
+	\begin{itemize}
+	\item Almacenar información de un material.
+	\end{itemize}
+\item \textbf{Relaciones:}
+	\begin{itemize}
+	\item -textura : textura \newline
+		El mapa de bits que utiliza de textura
+	\end{itemize}
+\item \textbf{Métodos:}
+	\begin{itemize}
+	\item \emph{+creación}(t:textura) : material \newline
+		Hace un material nuevo con la textura t.
+	\item +textura() : textura \newline
+		El mapa de bits que utiliza de textura.
+	\end{itemize}
+\end{itemize}
+
+\subsection{Vértice}
+Almacena un vértice de un polígono.
+\begin{itemize}
+\item \textbf{Responsabilidades:}
+	\begin{itemize}
+	\item Almacenar un vértice, con sus coordenadas, su posición de texturizado y la dirección normal de la superficie en ese punto.
+	\end{itemize}
+\item \textbf{Relaciones:}
+	\begin{itemize}
+	\item -coordenada : coordenada \newline
+		La posición del vértice dentro del espacio.
+	\item -normal : normal \newline
+		La dirección normal del vértice.
+	\item -color : color \newline
+		El color del vértice.
+	\item -uvs : colección ordenada de UV \newline
+		Las coordenadas UV de texturizado del vértice.
+	\end{itemize}
+\item \textbf{Métodos:}
+	\begin{itemize}
+	\item \emph{+creación}(c:coordenada, n:normal, co:color, uvs:colección ordenada de uv) : vertice \newline
+		Hace un nuevo vértice con las características indicadas.
+	\item +coordenada() : coordenada \newline
+		La posición del vértice dentro del espacio.
+	\item +normal() : normal \newline
+		La dirección normal del vértice.
+	\item +color() : color \newline
+		El color del vértice.
+	\item +uv(n:entero) : UV \newline
+		Las coordenadas UV de texturizado del vértice, referidas a la capa n.
+	\end{itemize}
+\end{itemize}
+
+\subsection{Capa}
+Almacena la información referida a una capa que se aplica a un polígono.
+\begin{itemize}
+\item \textbf{Responsabilidades:}
+	\begin{itemize}
+	\item Almacenar información sobre una capa de pintado que se aplica sobre un conjunto de polígonos.
+	\end{itemize}
+\item \textbf{Relaciones:}
+	\begin{itemize}
+	\item -material : material \newline
+		El material asociado a la capa.
+	\end{itemize}
+\item \textbf{Métodos:}
+	\begin{itemize}
+	\item \emph{+creación}(m:material) : capa \newline
+		Hace una nueva capa con material m.
+	\item +material() : material \newline
+		El material asociado a la capa.
+	\end{itemize}
+\end{itemize}
+
+\subsection{Polígono}
+Almacena la información de un polígono.
+
+Restricción: Para cada vértice de un polígono debe haber tantas coordenadas UV como capas tenga el polígono.
+
+
+\begin{itemize}
+\item \textbf{Responsabilidades:}
+	\begin{itemize}
+	\item Almacenar los vértices y las capas de material de un polígono.
+	\end{itemize}
+\item \textbf{Relaciones:}
+	\begin{itemize}
+	\item -vértices : colección ordenada de vértice \newline
+		Los vértices del polígono.
+	\item -capas : colección ordenada de capa \newline
+		Las capas de pintado que se aplican al polígono.
+	\end{itemize}
+\item \textbf{Métodos:}
+	\begin{itemize}
+	\item \emph{+creación}(v:colección ordenada de vértice, c:colección ordenada de capa) : polígono \newline
+		Hace un nuevo polígono con vértices v y capas c.
+	\item +vértice(n:entero) : vértice \newline
+		El n-ésimo vértice.
+	\item +capa(n:entero) : capa \newline
+		La n-ésima capa.
+	\end{itemize}
+\end{itemize}
+
+\subsection{Malla}
+Almacena una malla de polígonos.
+\begin{itemize}
+\item \textbf{Responsabilidades:}
+	\begin{itemize}
+	\item Almacenar una malla de polígonos.
+	\end{itemize}
+\item \textbf{Relaciones:}
+	\begin{itemize}
+	\item -polígonos : colección de polígono \newline
+		Los polígonos de la malla.
+	\end{itemize}
+\item \textbf{Métodos:}
+	\begin{itemize}
+	\item \emph{+creación}(p:colección de polígono) : malla \newline
+		Hace una nueva malla con los polígonos p.
+	\item +polígonos() : colección de polígono \newline
+		Los polígonos de la malla.
+	\end{itemize}
+\end{itemize}
+
+
+
+\section{Nivel de objetos}
+Este nivel se ha propuesto con el fin de almacenar y ordenar adecuadamente los objetos. Por ello se propone organizarlos en forma de árbol, donde la raíz sea el punto de control y acceso del árbol entero. Además se utiliza esto para dar un significado extra a los objetos. La transformada de un objeto utiliza como origen de coordenadas las del objeto inmediatamente superior en el árbol, que a su vez utiliza las del objeto superior, etc. Esto es cierto para todos los objetos excepto el objeto origen, que representa el origen de coordenadas del espacio. Esta característica permite implementar la capacidad de \emph{pegar} unos objetos a otros. El objeto \emph{pegado} pasaría a ser descendiente del objeto al que ha sido pegado, y así, al ejercer una transformada sobre el objeto padre el objeto pegado le seguiría, \emph{pegado} a sus coordenadas locales.
+
+\begin{figure}[htp]
+\centering
+%\includegraphics[width=14cm]{analisis/propuesto/modelos_objeto/objetos/clases.eps}
+\includegraphics[width=14cm]{diagramas/analisis/objetos-clases.eps}
+
+\caption{Diagrama de clases de análisis del nivel de Objetos}
+\end{figure}
+
+
+A continuación se describe la utilidad de cada clase:
+
+\subsection{Posición}
+Almacena la indicación de un lugar en el espacio.
+\begin{itemize}
+\item \textbf{Responsabilidades:}
+	\begin{itemize}
+	\item Almacenar una coordenada relativa en el espacio 3D.
+	\item Proveer mecanismos para manipular esa coordenada.
+	\end{itemize}
+\item \textbf{Relaciones:}
+	\begin{itemize}
+	\item -coordenadas : vector3 \newline
+		Coordenadas indicando la posición.
+	\end{itemize}
+\item \textbf{Métodos:}
+	\begin{itemize}
+	\item \emph{+creación}() : posición \newline
+		Hace una nueva posición situada en el origen relativo (coordenadas 0,0,0).
+	\item +coordenadas() : vector3 \newline
+		Las coordenadas que indican la posición.
+	\item +mover(desplazamiento:vector3)\newline
+		Mueve la posición la cantidad indicada.
+	\item +establecer\_posición(p:vector3)\newline
+		Sitúa la posición en el lugar indicado.
+	\end{itemize}
+\end{itemize}
+
+\subsection{Orientación}
+Almacena una rotación en el espacio. Hay que remarcar que la orientación se puede especificar mediante dos vectores: uno que indica a dónde apunta y otro que indica la vertical. Como vectores originales se propone (1,0,0) para la dirección de apunte y (0,1,0) para la vertical de un objeto que no ha sido rotado. No hay métodos para rotaciones de Euler, pero se recuerda que estas se pueden obtener mediante una sucesión de tres rotaciones alrededor de los ejes xyz o zyx.
+\begin{itemize}
+\item \textbf{Responsabilidades:}
+	\begin{itemize}
+	\item Almacenar una rotación en el espacio 3D.
+	\item Proveer mecanismos para manipular esa rotación.
+	\end{itemize}
+\item \textbf{Relaciones:}
+	\begin{itemize}
+	\item -valor : cuaternión \newline
+		Cuaternión con la rotación.
+	\end{itemize}
+\item \textbf{Métodos:}
+	\begin{itemize}
+	\item \emph{+creación}() : orientación \newline
+		Hace una nueva orientación nula (sin orientación inicial).
+	\item +rotar(v:vector3, angulo:float)\newline
+		Rota la orientación alrededor del vector especificado el ángulo especificado (en grados).
+	\item +establecer\_rotación(v:vector3, angulo:float) \newline
+		Modifica la orientación para que tenga las características indicadas.
+	\item +extraer\_rotación() : (v:vector3, angulo:float) \newline
+		Devuelve la orientación como una única rotación.
+	\item +frontal() : vector3 \newline
+		Devuelve la dirección a la que apunta la orientación.
+	\item +vertical() : vector3 \newline
+		Devuelve la dirección vertical de la orientación.
+	\item +rotar\_vector(vector3) : vector3 \newline
+		Aplica la orientación al vector indicado.
+	\end{itemize}
+\end{itemize}
+
+\subsection{Escala}
+Almacena las dimensiones de forma relativa. Es decir, para un objeto, las dimensiones (1,1,1) corresponden a su tamaño original, mientras que (10,10,10) correspondería a un objeto 10 veces más grande en cada una de sus dimensiones. Se soportan dimensiones negativas, que significan que el objeto está reflejado en el eje indicado. También se soportan dimensiones nulas, que significan que el objeto está proyectado sobre un subespacio de dimensión inferior. Esto debe ser tenido en cuenta por la implementación concreta bajo un API concreto del motor gráfico.
+\begin{itemize}
+\item \textbf{Responsabilidades:}
+	\begin{itemize}
+	\item Almacenar una definición de escala relativa en el espacio 3D.
+	\item Proveer mecanismos para manipular esa definición de escala.
+	\end{itemize}
+\item \textbf{Relaciones:}
+	\begin{itemize}
+	\item -valor : vector3 \newline
+		Vector con las tres dimensiones.
+	\end{itemize}
+\item \textbf{Métodos:}
+	\begin{itemize}
+	\item \emph{+creación}() : escala \newline
+		Hace una nueva escala con tamaño original (1,1,1).
+	\item +escalar(vector3) \newline
+		Multiplica el vector escala por el indicado, elemento a elemento y almacena el resultado.
+	\item +establecer\_escala(vector3)\newline
+		Modifica la escala para que tenga las características indicadas.
+	\item +escala() : vector3 \newline
+		Devuelve un vector con las tres componentes de la escala.
+	\end{itemize}
+\end{itemize}
+
+\subsection{Transformada}
+Almacena una transformada de un objeto. Sólo se almacenan la posición, orientación y escala del objeto. Como se indicó antes, estas transformadas se almacenan relativamente respecto al objeto padre.
+\begin{itemize}
+\item \textbf{Responsabilidades:}
+	\begin{itemize}
+	\item Almacenar una definición de transformada relativa en el espacio 3D.
+	\item La transformada debe soportar desplazamientos, rotaciones y escalas.
+	\item Proveer mecanismos para manipular esa transformada.
+	\end{itemize}
+\item \textbf{Relaciones:}
+	\begin{itemize}
+	\item -posición : posición \newline
+	\item -orientación : orientación \newline
+	\item -escala : escala \newline
+	\end{itemize}
+\item \textbf{Métodos:}
+	\begin{itemize}
+	\item \emph{+creación}() : transformada \newline
+		Hace una nueva transformada. Esta transformada tiene las siguientes características:
+		\begin{itemize}
+		\item Posición: (0,0,0)
+		\item Orientación: Vector(1,0,0), ángulo 0º
+		\item Escala: (1,1,1)
+		\end{itemize}
+	\item +posición() : posición \newline
+		La posición.
+	\item +orientación() : orientación \newline
+		La orientación.
+	\item +escala() : escala \newline
+		La escala.
+	\end{itemize}
+\end{itemize}
+
+\subsection{Objeto}
+Almacena un objeto en el espacio. Esta clase es el modelo abstracto para acceder al árbol de objetos que representa una escena, y de ella heredan los tipos concretos de objeto que se describirán.
+\begin{itemize}
+\item \textbf{Responsabilidades:}
+	\begin{itemize}
+	\item Almacenar y organizar un objeto en el espacio.
+	\item Proveer un mecanismo para la organización de objetos en forma de árbol.
+	\end{itemize}
+\item \textbf{Relaciones:}
+	\begin{itemize}
+	\item \#padre : objeto opcional \newline
+		El objeto inmediatamente superior en el árbol de objetos (si está metido en un árbol de objetos).
+	\item \#hijos : colección de objeto \newline
+		Los objetos que tienen a este objeto de padre.
+	\item \#transformada : transformada \newline
+		La transformada de este objeto.
+	\end{itemize}
+%\item \textbf{Atributos:}
+%	\begin{itemize}
+%	\end{itemize}
+\item \textbf{Métodos:}
+	\begin{itemize}
+	\item \emph{+creación}() : objeto \newline
+		Crea el objeto nuevo e inicializa la tranformada.
+	\item +padre() : objeto\newline
+		El padre del objeto.
+	\item \#set\_padre(objeto opcional)\newline
+		Cambia el atributo \emph{padre}
+	\item +hijos() : colección de objeto\newline
+		Los objetos hijo.
+	\item \#set\_hijos(colección de objeto)\newline
+		Cambia el atributo \emph{hijos}
+	\item +establecer\_padre(objeto)\newline
+		Hace que el objeto indicado pase a ser el padre de este objeto, y este objeto pase a ser hijo del objeto indicado. Elimina otras dependencias con otros objetos si existieran.
+	\item +origen() : objeto \newline
+		El objeto origen del que depende el árbol donde está situado este objeto.
+	\item +transformada() : transformada \newline
+		Devuelve la transformada del objeto.
+	\item +transformada\_final() : transformada \newline
+		Computa la transformada desde el origen hasta el objeto actual, obteniendo una transformada que sería el resultado de aplicar cada una de las transformadas que afectan al objeto en orden.
+	\end{itemize}
+\end{itemize}
+
+\subsection{Objeto\_origen}
+Almacena el origen de coordenadas del espacio como objeto. Está pensado para ser la raíz del árbol de objetos. Ya que todos los objetos dependen posicionalmente de éste no tiene sentido modificar su transformada (todos los objetos, incluida la cámara se verían afectados igual, y la escena no cambiaría desde el punto de vista del observador).
+\begin{itemize}
+\item \textbf{Responsabilidades:}
+	\begin{itemize}
+	\item Proveer una raíz para el árbol de objetos.
+	\end{itemize}
+\item \textbf{Relaciones:}
+	\begin{itemize}
+	\item Es una especificación de Objeto. \newline
+		Es un tipo de objeto pensado para ser la raíz del árbol de objetos.
+	\end{itemize}
+\item \textbf{Métodos:}
+	\begin{itemize}
+	\item \emph{+creación}() : objeto\_origen \newline
+		Crea un objeto\_origen nuevo.
+	\end{itemize}
+\end{itemize}
+
+\subsection{Dummy}
+El dummy es un objeto nulo, que no afecta a la representación en la pantalla. Sin embargo, puede ser utilizado para pegarle otros objetos y manipularlos en conjunto a través de éste.
+\begin{itemize}
+\item \textbf{Responsabilidades:}
+	\begin{itemize}
+	\item Proveer un objeto que no afecte a la representación en la pantalla, pero pueda ser utilizado como punto de apoyo.
+	\end{itemize}
+\item \textbf{Relaciones:}
+	\begin{itemize}
+	\item Es una especificación de Objeto. \newline
+		Es un tipo de objeto pensado para ser la raíz de sub-árboles de objetos.
+	\end{itemize}
+\item \textbf{Métodos:}
+	\begin{itemize}
+	\item \emph{+creación}() : dummy \newline
+		Crea un dummy nuevo.
+	\end{itemize}
+\end{itemize}
+
+\subsection{Luz}
+Representa una fuente de luz que ilumina la escena. Tiene varias especializaciones que se especifican más adelante. Cabe resaltar que el color también especifica la \emph{cantidad} de luz. Así, una luz de color (1.0, 1.0, 1.0) es blanca de intensidad máxima, mientras que una luz de color (0.5, 0.5, 0.5) también es blanca, pero de intensidad media. Una luz \emph{apagada} (que realmente no emite luz) tendría un color (0.0, 0.0, 0.0). La luz se divide en dos partes: difusa y especular. La parte difusa se refleja uniformemente en todas las direcciones. En cambio, la parte especular se refleja preferentemente en direcciones concretas, de una manera similar a como la luz se refleja en un espejo o una superficie pulida.
+\begin{itemize}
+\item \textbf{Responsabilidades:}
+	\begin{itemize}
+	\item Proveer un objeto que represente una fuente de luz.
+	\end{itemize}
+\item \textbf{Relaciones:}
+	\begin{itemize}
+	\item Es una especificación de Objeto. \newline
+		Es un tipo de objeto que representa una fuente de luz.
+	\item \#color\_difuso : color \newline
+		El color de la parte difusa de la luz
+	\item \#color\_especular : color \newline
+		El color de la parte especular de la luz
+	\end{itemize}
+\item \textbf{Métodos:}
+	\begin{itemize}
+	\item \emph{+creación}() : luz \newline
+		Inicializa la luz a valores por defecto. Estos son:
+		\begin{itemize}
+		\item Color difuso : (1.0,1.0,1.0)
+		\item Color especular : (0.0,0.0,0.0)
+		\end{itemize}
+	\item +color\_difuso() : color \newline
+		El color de la parte difusa de la luz
+	\item +set\_color\_difuso(color)\newline
+		Cambia el color difuso de la luz.
+	\item +color\_especular() : color \newline
+		El color de la parte especular de la luz
+	\item +set\_color\_especular(color) \newline
+		Cambia el color especular de la luz.
+	\end{itemize}
+\end{itemize}
+
+\subsection{Luz\_puntual}
+Representa una fuente de luz que sale de un punto del espacio. El factor de atenuación se computa como:
+
+\begin{displaymath}
+Atenuaci\acute on = \frac{1}{Kc + Kl*d + Kq*d^2}
+\end{displaymath}
+Donde $Kc$ es el factor de atenuación constante, $Kl$ es el factor de atenuación lineal, $Kq$ es el factor de atenuación cuadrático y $d$ es la distancia del punto de luz al vértice iluminado.
+
+\begin{itemize}
+\item \textbf{Responsabilidades:}
+	\begin{itemize}
+	\item Proveer un objeto que represente una fuente de luz puntual.
+	\end{itemize}
+\item \textbf{Relaciones:}
+	\begin{itemize}
+	\item Es una especificación de Luz. \newline
+		Es un tipo de Luz que representa al grupo de luces que proceden de un punto en el espacio.
+	\end{itemize}
+\item \textbf{Atributos:}
+	\begin{itemize}
+	\item \#atenuacion\_constante : real \newline
+		El factor de atenuación de la luz constante
+	\item \#atenuacion\_lineal : real \newline
+		El factor de atenuación de la luz que depende linealmente de la distancia del punto de luz al vértice iluminado.
+	\item \#atenuacion\_cuadrática : real \newline
+		El factor de atenuación de la luz que depende cuadráticamente de la distancia del punto de luz al vértice iluminado.
+	\end{itemize}
+\item \textbf{Métodos:}
+	\begin{itemize}
+	\item \emph{+creación}() : luz\_puntual \newline
+		Inicializa la luz con los valores:
+		\begin{itemize}
+		\item Atenuación constante : 1
+		\item Atenuación lineal : 0
+		\item Atenuación cuadrática : 0
+		\end{itemize}
+	\item +atenuacion\_constante() : real \newline
+		El factor de atenuación de la luz constante
+	\item +set\_atenuacion\_constante(real)\newline
+		Cambia el factor de atenuación de la luz constante
+	\item +atenuacion\_lineal() : real \newline
+		El factor de atenuación de la luz que depende linealmente de la distancia del punto de luz al vértice iluminado.
+	\item +set\_atenuacion\_lineal(real) \newline
+		Cambia el factor de atenuación de la luz que depende linealmente de la distancia del punto de luz al vértice iluminado.
+	\item +atenuacion\_cuadrática() : real \newline
+		El factor de atenuación de la luz que depende cuadráticamente de la distancia del punto de luz al vértice iluminado.
+	\item +set\_atenuacion\_cuadrática(real)\newline
+		Cambia el factor de atenuación de la luz que depende cuadráticamente de la distancia del punto de luz al vértice iluminado.
+	\end{itemize}
+\end{itemize}
+
+\subsection{Punto\_luz}
+Representa una fuente de luz puntual omnidireccional, es decir, que la luz se emite uniformemente en todas las direcciones.
+\begin{itemize}
+\item \textbf{Responsabilidades:}
+	\begin{itemize}
+	\item Proveer un objeto que represente una fuente de luz puntual.
+	\end{itemize}
+\item \textbf{Relaciones:}
+	\begin{itemize}
+	\item Es una especificación de Luz\_puntual. \newline
+		Es una luz puntual que radia por igual en todas direcciones.
+	\end{itemize}
+\item \textbf{Métodos:}
+	\begin{itemize}
+	\item \emph{+creación}() : punto\_luz \newline
+		Crea un punto\_luz nuevo.
+	\end{itemize}
+\end{itemize}
+
+\subsection{Foco}
+Representa una fuente de luz puntual con una dirección preferente de iluminación. El foco ilumina en la dirección frontal a la que apunta su transformada.
+\begin{itemize}
+\item \textbf{Responsabilidades:}
+	\begin{itemize}
+	\item Proveer un objeto que represente una fuente de luz direccional
+	\end{itemize}
+\item \textbf{Relaciones:}
+	\begin{itemize}
+	\item Es una especificación de Luz\_puntual. \newline
+		Es una luz puntual que radia en una dirección concreta.
+	\end{itemize}
+\item \textbf{Atributos:}
+	\begin{itemize}
+	\item \#apertura : real \newline
+		Especifica el ángulo de apertura del cono de luz. Intervalo válido: [0º,90º]
+	\item \#concentración : real \newline
+		Especifica la concentración de luz. Valores pequeños significan que la luz se distribuye uniformemente, mientras que valores grandes significan que la luz se concentra en el centro del foco. Intervalo válido [0,100]
+	\end{itemize}
+\item \textbf{Métodos:}
+	\begin{itemize}
+	\item \emph{+creación}() : foco \newline
+		Crea e inicializa el foco con los valores siguientes:
+		\begin{itemize}
+		\item Apertura : 45º
+		\item Concentración : 0
+		\end{itemize}
+	\item +apertura() : real \newline
+		El ángulo de apertura del cono de luz.
+	\item +set\_apertura(real)\newline
+		Cambia el ángulo de apertura.
+	\item +concentración() : real \newline
+		La concentración de luz.
+	\item +set\_concentración(real)\newline
+		Cambia la concentración de la luz.
+	\end{itemize}
+\end{itemize}
+
+\subsection{Sol}
+Representa una fuente de luz muy lejana que ilumina la escena uniformemente. Los rayos de esta fuente de luz son paralelos. Para esta fuente de luz su posición no importa, tan sólo su orientación, que especifica la dirección de los rayos.
+\begin{itemize}
+\item \textbf{Responsabilidades:}
+	\begin{itemize}
+	\item Proveer un objeto que represente una fuente de luz muy lejana que ilumine toda la escena.
+	\end{itemize}
+\item \textbf{Relaciones:}
+	\begin{itemize}
+	\item Es una especificación de Luz. \newline
+		Es una luz que ilumina toda la escena por igual.
+	\end{itemize}
+\item \textbf{Métodos:}
+	\begin{itemize}
+	\item \emph{+creación}() : sol \newline
+		Crea un sol nuevo.
+	\end{itemize}
+\end{itemize}
+
+\subsection{Objeto\_malla}
+Representa un objeto que tiene una malla de polígonos asociada, y que se pinta en pantalla.
+\begin{itemize}
+\item \textbf{Responsabilidades:}
+	\begin{itemize}
+	\item Proveer un objeto que represente un objeto físico.
+	\end{itemize}
+\item \textbf{Relaciones:}
+	\begin{itemize}
+	\item Es una especificación de Objeto. \newline
+		Es un objeto que se dibuja directamente en pantalla.
+	\item \#malla : malla opcional \newline
+		La malla asociada.
+	\end{itemize}
+\item \textbf{Métodos:}
+	\begin{itemize}
+	\item \emph{+creación}() : objeto\_malla \newline
+		Crea un objeto\_malla nuevo sin malla inicialmente.
+	\item +malla() : malla \newline
+		Devuelve la malla asociada.
+	\item +set\_malla(malla)\newline
+		Cambia la malla asociada.
+	\end{itemize}
+\end{itemize}
+
+\subsection{Cámara}
+Representa el punto de vista del espectador. Esta vista está limitada por los planos de corte. Estos planos son perpendiculares a la dirección a la que apunta la cámara.
+\begin{itemize}
+\item \textbf{Responsabilidades:}
+	\begin{itemize}
+	\item Controla el punto de vista.
+	\end{itemize}
+\item \textbf{Relaciones:}
+	\begin{itemize}
+	\item Es una especificación de Objeto. \newline
+		Es un objeto que representa el punto de vista del espectador.
+	\end{itemize}
+\item \textbf{Atributos:}
+	\begin{itemize}
+	\item \#plano\_cercano : real \newline
+		La distancia hasta el plano de corte cercano. Un objeto que esté más cerca de la cámara que este plano no será representado en pantalla.
+	\item \#plano\_lejano : real \newline
+		La distancia hasta el plano de corte lejano. Un objeto que esté más lejos de la cámara que este plano no será representado en pantalla.
+	\end{itemize}
+\item \textbf{Métodos:}
+	\begin{itemize}
+	\item \emph{+creación}() : Cámara \newline
+		Inicializa la cámara con los valores:
+		\begin{itemize}
+		\item plano\_cercano = 0.5
+		\item plano\_lejano =  100
+		\end{itemize}
+	\item +set\_planos\_corte(cercano : real, lejano : real)\newline
+		Especifica las distancias a los planos de corte.
+	\item +planos\_corte() : (cercano : real, lejano : real) \newline
+		Las distancias a los planos de corte.
+	\end{itemize}
+\end{itemize}
+
+\subsection{Cámara\_perspectiva}
+Representa una cámara con perspectiva, es decir, los objetos lejanos se ven más pequeños que los cercanos.
+\begin{itemize}
+\item \textbf{Responsabilidades:}
+	\begin{itemize}
+	\item Proveer un punto de vista con perspectiva. Los objetos lejanos se verán pequeños y los cercanos grandes.
+	\end{itemize}
+\item \textbf{Relaciones:}
+	\begin{itemize}
+	\item Es una especificación de Cámara. \newline
+		Es una cámara con perspectiva.
+	\end{itemize}
+\item \textbf{Atributos:}
+	\begin{itemize}
+	\item \#focal\_x : real \newline
+		Especifica la apertura de la cámara respecto al eje x de la pantalla. En grados/pixel.
+	\item \#focal\_y : real \newline
+		Especifica la apertura de la cámara respecto al eje y de la pantalla. En grados/pixel.
+	\end{itemize}
+\item \textbf{Métodos:}
+	\begin{itemize}
+	\item \emph{+creación}() : Cámara\_perspectiva \newline
+		Hace una nueva cámara con perspectiva. Los valores con los que se inicializa son:
+		\begin{itemize}
+		\item focal\_x = 0.075
+		\item focal\_y = 0.075
+		\end{itemize}
+		Esto significa que la cámara tiene una apertura inicial de 45º en el eje y para una resolución de pantalla de 800x600 píxeles.
+	\item +set\_focal(focal\_x : real, focal\_y : real)\newline
+		Cambia la apertura de la cámara.
+	\item +focal(focal\_x : real, focal\_y : real) \newline
+		La apertura de la cámara.
+	\end{itemize}
+\end{itemize}
+
+\subsection{Cámara\_ortográfica}
+Representa una cámara de proyección ortográfica. Si dos objetos tienen el mismo tamaño, entonces se ven igual de grandes con independencia de su situación. El campo de visión que define la cámara tiene la forma de un paralelepípedo, donde una de las bases es la pantalla, en la que se proyecta el escenario.
+\begin{itemize}
+\item \textbf{Responsabilidades:}
+	\begin{itemize}
+	\item Proveer un punto de vista sin perspectiva. Los objetos se verán a su tamaño con independencia de la cercanía o la lejanía a la cámara.
+	\end{itemize}
+\item \textbf{Relaciones:}
+	\begin{itemize}
+	\item Es una especificación de Cámara. \newline
+		Es una cámara con proyección plana.
+	\end{itemize}
+\item \textbf{Atributos:}
+	\begin{itemize}
+	\item \#ancho : real \newline
+		Especifica el volumen a lo ancho del campo de visión.
+	\item \#alto : real \newline
+		Especifica el volumen a lo alto del campo de visión.
+	\end{itemize}
+\item \textbf{Métodos:}
+	\begin{itemize}
+	\item \emph{+creación}() : Cámara\_ortográfica \newline
+		Hace una nueva cámara ortográfica. Inicializa con los siguientes valores:
+		\begin{itemize}
+		\item ancho = 8
+		\item alto = 6
+		\end{itemize}
+		Esto significa que inicialmente la cámara tiene un volumen de visión de 8 unidades a lo ancho y 6 a lo alto, teniendo un ratio de 1/1 para una resolución de 800x600 píxeles.
+	\item +set\_volumen(ancho : real, alto : real)\newline
+		Cambia el volumen del campo de visión.
+	\item +volumen() : (ancho : real, alto : real) \newline
+		El volumen del campo de visión.
+	\end{itemize}
+\end{itemize}
+
+\section{Nivel de pintado}
+Este nivel organiza qué se pinta en cada pantalla. Este nivel está organizado alrededor del concepto de escena, que podemos definir como el conjunto de capas de pintado que hay que aplicar a la pantalla para conseguir que muestre lo que queramos.
+
+\begin{figure}[htp]
+\centering
+%\includegraphics[width=14cm]{analisis/propuesto/modelos_objeto/render/clases.eps}
+\includegraphics[width=14cm]{diagramas/analisis/render-clases.eps}
+
+\caption{Diagrama de clases de análisis del nivel de pintado}
+\end{figure}
+
+\subsection{Capa}
+Representa una capa de pintado en la escena. Cada capa pinta sobre las anteriores en la escena.
+\begin{itemize}
+\item \textbf{Responsabilidades:}
+	\begin{itemize}
+	\item Pintar lo que sea necesario sobre la escena.
+	\end{itemize}
+%\item \textbf{Relaciones:}
+%\item \textbf{Atributos:}
+%\item \textbf{Métodos:}
+\end{itemize}
+
+\subsection{Capa3d}
+Representa una capa que pinta una escena 3D.
+\begin{itemize}
+\item \textbf{Responsabilidades:}
+	\begin{itemize}
+	\item Pintar la escena especificada.
+	\end{itemize}
+\item \textbf{Relaciones:}
+	\begin{itemize}
+	\item Es una especificación de Capa.
+	\item Depende de Objeto\_origen y Cámara.
+	\end{itemize}
+%\item \textbf{Atributos:}
+
+%\item \textbf{Métodos:}
+\end{itemize}
+
+\subsection{Capa borrado}
+Representa una capa que pinta toda la escena de un color uniforme.
+\begin{itemize}
+\item \textbf{Responsabilidades:}
+	\begin{itemize}
+	\item Pintar la escena del color indicado.
+	\end{itemize}
+\item \textbf{Relaciones:}
+	\begin{itemize}
+	\item Es una especificación de Capa.
+	\end{itemize}
+\item \textbf{Atributos:}
+	\begin{itemize}
+	\item +color \newline
+El color con el que se pintará la escena.
+	\end{itemize}
+%\item \textbf{Métodos:}
+\end{itemize}
+
+\subsection{Capa borrado zbuffer}
+Representa una capa que borra el buffer de profundidad.
+\begin{itemize}
+\item \textbf{Responsabilidades:}
+	\begin{itemize}
+	\item Pintar lo que sea necesario sobre la escena.
+	\end{itemize}
+\item \textbf{Relaciones:}
+	\begin{itemize}
+	\item Es una especificación de Capa.
+	\end{itemize}
+%\item \textbf{Atributos:}
+%\item \textbf{Métodos:}
+\end{itemize}
+
+\subsection{Escena}
+Representa una escena compuesta por la aplicación sucesiva de varias capas.
+\begin{itemize}
+\item \textbf{Responsabilidades:}
+	\begin{itemize}
+	\item Pintar las capas en el orden especificado.
+	\end{itemize}
+\item \textbf{Relaciones:}
+	\begin{itemize}
+	\item Agrega ordenadamente varias instancias de Capa.
+	\end{itemize}
+
+%\item \textbf{Atributos:}
+%\item \textbf{Métodos:}
+\end{itemize}
+
+\subsection{Pantalla}
+Representa una pantalla del ordenador, donde se proyecta una escena.
+\begin{itemize}
+\item \textbf{Responsabilidades:}
+	\begin{itemize}
+	\item Representar una pantalla, y asociar la escena correspondiente.
+	\end{itemize}
+\item \textbf{Relaciones:}
+	\begin{itemize}
+	\item Agrega ordenadamente varias instancias de Capa.
+	\end{itemize}
+
+\item \textbf{Atributos:}
+	\begin{itemize}
+	\item Ancho \newline
+	El ancho de la pantalla.
+	\item Alto \newline
+	El alto de la pantalla.
+	\end{itemize}
+\item \textbf{Métodos:}
+	\begin{itemize}
+	\item Dimensiones \newline
+	Devuelve las dimensiones de la pantalla (ancho y alto).
+	\end{itemize}	
+\end{itemize}
+
+\subsection{Monitor}
+Representa un monitor del ordenador.
+\begin{itemize}
+\item \textbf{Responsabilidades:}
+	\begin{itemize}
+	\item Representar un monitor del ordenador, y gestionar los accesos al sistema de ventanas si hubiera.
+	\end{itemize}
+\item \textbf{Relaciones:}
+	\begin{itemize}
+	\item Es una especificación de Pantalla.
+	\end{itemize}
+
+\item \textbf{Atributos:}
+	\begin{itemize}
+	\item estado \newline
+El estado del monitor, ya sea como ventana o pantalla completa en un gestor de ventanas, además de su posición (primer o segundo plano).
+	\end{itemize}
+\item \textbf{Métodos:}
+	\item +estado  \newline
+	Getter.
+	\item +cambiar\_modo \newline
+	Cambia el modo de pantalla, o las dimensiones de la ventana.
+
+\end{itemize}
+
+\section{Subsistema de procesos}
+Este subsistema proporciona una base para la implementación de la lógica del juego, basado en el modelo de procesos de un sistema operativo multitarea.
+
+
+\begin{figure}[htp]
+\centering
+%\includegraphics[width=14cm]{analisis/propuesto/modelos_objeto/geometria/clases.eps}
+\includegraphics[width=14cm]{diagramas/analisis/procesos-clases.eps}
+\caption{Diagrama de clases de análisis del subsistema de Procesos}
+\end{figure}
+
+
+\subsection{Sistema}
+Representa un sistema de procesos.
+\begin{itemize}
+\item \textbf{Responsabilidades:}
+	\begin{itemize}
+	\item Almacenar y ordenar todos los procesos por prioridad.
+	\item Dar una ráfaga de CPU a cada proceso por orden de prioridad.
+	\end{itemize}
+\item \textbf{Relaciones:}
+	\begin{itemize}
+	\item Agrega Prioridad.
+	\end{itemize}
+
+%\item \textbf{Atributos:}
+%	\begin{itemize}
+%	\item estado \newline
+%El estado del monitor, ya sea como ventana o pantalla completa en un gestor de ventanas, además de su posición (primer o segundo plano).
+%	\end{itemize}
+\item \textbf{Métodos:}
+	\item +ejecutar\_procesos  \newline
+	Da una ráfaga de CPU a los procesos despiertos.
+	\item +ejecutar\_dormidos \newline
+	Da una ráfaga de CPU a los procesos dormidos.
+
+\end{itemize}
+

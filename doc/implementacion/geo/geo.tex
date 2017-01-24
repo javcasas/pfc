@@ -1,0 +1,621 @@
+\chapter{Subsistema Geometría}
+\section{Geometría abstracta}
+En esta parte analizamos el conjunto de clases abstractas referidas a geometría.
+\subsection{\emph{coordenada}}
+\subsubsection{Métodos}
+\begin{itemize}
+\item +\emph{valor} : vector3 \newline
+El valor de la coordenada.
+\end{itemize}
+
+\subsection{\emph{normal}}
+\subsubsection{Métodos}
+\begin{itemize}
+\item +\emph{valor} : vector3 \newline
+El valor de la normal, normalizado (es decir, vector de longitud 1).
+\end{itemize}
+
+\subsection{\emph{color}}
+\subsubsection{Métodos}
+\begin{itemize}
+\item +\emph{valor} : vector4 \newline
+El valor del color, como vector RGBA, donde cada componente puede valer [0..1].
+\end{itemize}
+
+\subsection{\emph{uv}}
+\subsubsection{Métodos}
+\begin{itemize}
+\item +\emph{valor} : vector2 \newline
+Valor de coordenada UV.
+\end{itemize}
+
+\subsection{\emph{vertice}}
+\subsubsection{Relaciones}
+\begin{itemize}
+\item Depende de \Clase{coordenada}.
+\item Depende de \Clase{normal}.
+\item Depende de \Clase{uv}.
+\item Depende de \Clase{color}.
+\end{itemize}
+\subsubsection{Métodos}
+\begin{itemize}
+\item +\emph{coordenada} : coordenada \newline
+La coordenada asociada al vértice.
+\item +\emph{normal} : normal \newline
+La normal asociada al vértice.
+\item +\emph{color} : color \newline
+El color del vértice.
+\item +\emph{uvs} : uv list \newline
+Las coordenadas UV, una por cada capa que tenga el polígono que tenga este vértice asociado.
+\end{itemize}
+
+\subsection{\emph{textura}}
+
+\subsection{\emph{material}}
+\subsubsection{Relaciones}
+\begin{itemize}
+\item Depende de \Clase{textura}.
+\end{itemize}
+%\subsubsection{Atributos}
+%\begin{itemize}
+%\end{itemize}
+\subsubsection{Métodos}
+\begin{itemize}
+\item +\emph{color\_ambiente} : color \newline
+El color del material iluminado por luz ambiente.
+\item +\emph{color\_difuso} : color \newline
+El color del material iluminado por luz difusa.
+\item +\emph{color\_especular} : color \newline
+El color de los brillos del material.
+\item +\emph{brillo} : float \newline
+El coeficiente de brillo del material.
+\item +\emph{color\_emision} : color \newline
+El color emitido por el material.
+\item +\emph{textura} : textura \newline
+La textura del material.
+\item +\emph{modificador\_color\_vertice} : t\_modificador\_color\_vertice option \newline
+La manera que tiene el color del vértice de modificar el color del material. Puede valer:
+\begin{itemize}
+\item \emph{None} : Ninguna modificación.
+\item \emph{Some(Ambiente)} : El color del vértice determina el color ambiente.
+\item \emph{Some(Difuso)} : El color del vértice determina el color difuso.
+\item \emph{Some(Especular)} : El color del vértice determina el color especular.
+\item \emph{Some(Emisión)} : El color del vértice determina el color de emisión.
+\item \emph{Some(Ambiente\_y\_difuso)} : El color del vértice determina el color ambiente y el color difuso.
+\end{itemize}
+\end{itemize}
+
+\subsection{\emph{capa}}
+\subsubsection{Relaciones}
+\begin{itemize}
+\item Depende de \Clase{material}.
+\end{itemize}
+\subsubsection{Métodos}
+\begin{itemize}
+\item +\emph{material} : material \newline
+El material del que está compuesto la capa.
+\end{itemize}
+
+\subsection{\emph{poligono}}
+\subsubsection{Relaciones}
+\begin{itemize}
+\item Depende de \Clase{vertice}.
+\item Depende de \Clase{capa}.
+\end{itemize}
+\subsubsection{Métodos}
+\begin{itemize}
+\item +\emph{vertices} : vertice list \newline
+Los vértices que componen el polígono, en orden.
+\item +\emph{capas} : capa list \newline
+Las distintas capas que tiene el polígono.
+\end{itemize}
+
+\subsection{\emph{malla}}
+\subsubsection{Relaciones}
+\begin{itemize}
+\item Depende de \Clase{poligono}.
+\item Depende de \Clase{vertice}.
+\item Depende de \Clase{material}.
+\end{itemize}
+\subsubsection{Métodos}
+\begin{itemize}
+\item +\emph{poligonos} : poligono list \newline
+Los polígonos de la malla.
+\item +\emph{vertices} : vertice list \newline
+Todos los vértices que están interconectados mediante los polígonos de la malla.
+\item +\emph{materiales} : material list \newline
+Todos los materiales que están asociados a alguna capa de algún polígono de la malla.
+\end{itemize}
+
+\subsection{\emph{bitmap}}
+\subsubsection{Métodos}
+\begin{itemize}
+\item +\emph{dim\_x} : int \newline
+La dimensión horizontal o ancho del bitmap.
+\item +\emph{dim\_y} : int \newline
+La dimensión vertical o alto del bitmap.
+\item +\emph{bits\_por\_pixel} : int \newline
+La profundidad de color del bitmap.
+\item +\emph{contenido} : string \newline
+El bitmap como una ristra de bytes.
+\item +\emph{get\_pixel} ((x,y):(int*int)) : color \newline
+Obtiene el color de un pixel especificado por las coordenadas (x,y).
+\item +\emph{formato\_color} : (int32 * int32 * int32 * int32) \newline
+La manera de almacenar el color. Los enteros int32 almacenan una máscara de bits que define de cada 32 bits cuáles se dedican a cada color. El primer int32 se refiere al color rojo, el segundo al verde, el tercero al azul y el cuarto a la transparencia o alfa de la imagen.
+\end{itemize}
+
+\section{Geometría simple}
+\subsection{coordenada\_simple}
+\subsubsection{Relaciones}
+\begin{itemize}
+\item Es una especificación de \Clase{coordenada}.
+\end{itemize}
+\subsubsection{Atributos}
+\begin{itemize}
+\item valor : vector3 \newline
+El valor de la coordenada.
+\end{itemize}
+\subsubsection{Métodos}
+\begin{itemize}
+\item +valor : vector3 \newline
+El valor de la coordenada.
+\end{itemize}
+\subsubsection{Parámetros de instanciación}
+\begin{itemize}
+\item v : vector3 \newline
+El vector que será la coordenada.
+\end{itemize}
+
+
+\subsection{normal\_simple}
+\subsubsection{Relaciones}
+\begin{itemize}
+\item Es una especificación de \Clase{normal}.
+\end{itemize}
+\subsubsection{Atributos}
+\begin{itemize}
+\item valor : vector3 \newline
+Vector con la dirección de la normal.
+\end{itemize}
+\subsubsection{Métodos}
+\begin{itemize}
+\item +valor : vector3 \newline
+Vector con la dirección de la normal.
+\end{itemize}
+\subsubsection{Parámetros de instanciación}
+\begin{itemize}
+\item v : vector3 \newline
+El vector que se utilizará como dirección normal. Este vector se hace unitario (longitud 1, normalizado).
+\end{itemize}
+
+
+\subsection{color\_simple}
+\subsubsection{Relaciones}
+\begin{itemize}
+\item Es una especificación de \Clase{color}.
+\end{itemize}
+\subsubsection{Atributos}
+\begin{itemize}
+\item valor : vector4\newline
+Vector con el color en formato RGBA, donde cada componente de color puede valer [0..1].
+\end{itemize}
+\subsubsection{Métodos}
+\begin{itemize}
+\item +valor : vector4 \newline
+Vector con el color en formato RGBA, donde cada componente de color puede valer [0..1].
+\end{itemize}
+\subsubsection{Parámetros de instanciación}
+\begin{itemize}
+\item v : vector4 \newline
+El vector que se utilizará como color.
+\end{itemize}
+
+
+\subsection{uv\_simple}
+\subsubsection{Relaciones}
+\begin{itemize}
+\item Es una especificación de \Clase{uv}.
+\end{itemize}
+\subsubsection{Atributos}
+\begin{itemize}
+\item valor : vector2 \newline
+Contiene la coordenada de texturizado.
+\end{itemize}
+\subsubsection{Métodos}
+\begin{itemize}
+\item +valor : vector2 \newline
+La coordenada de texturizado.
+\end{itemize}
+\subsubsection{Parámetros de instanciación}
+\begin{itemize}
+\item v : vector2 \newline
+El vector que se utilizará como coordenada de texturizado.
+\end{itemize}
+
+
+\subsection{vertice\_simple}
+\subsubsection{Relaciones}
+\begin{itemize}
+\item Es una especificación de \Clase{vertice}.
+\item Depende de \Clase{coordenada\_simple}, \Clase{normal\_simple}, \Clase{uv\_simple} y \Clase{color\_simple}.
+\end{itemize}
+\subsubsection{Atributos}
+\begin{itemize}
+\item coordenada : coordenada\_simple \newline
+La coordenada del vértice.
+\item normal : normal\_simple \newline
+La normal del vértice.
+\item color : color\_simple \newline
+El color del vértice.
+\item uvs : uv\_simple list \newline
+Las coordenadas uv del vértice.
+\end{itemize}
+\subsubsection{Métodos}
+\begin{itemize}
+\item +coordenada\_simple : coordenada\_simple
+\item +normal\_simple : normal\_simple
+\item +color\_simple : color\_simple
+\item +uv\_simples : uv\_simple list \newline
+Getters para los atributos, que devuelven objetos \emph{simples} (con el sufijo simple).
+\end{itemize}
+\subsubsection{Parámetros de instanciación}
+\begin{itemize}
+\item c : coordenada\_simple
+\item n : normal\_simple
+\item co : color\_simple
+\item uv : uv\_simple list \newline
+Atributos de la clase.
+\end{itemize}
+
+
+\subsection{c\_textura\_bitmap}
+\subsubsection{Relaciones}
+\begin{itemize}
+\item Es una especificación de \Clase{textura}.
+\item Depende de \Clase{bitmap}.
+\end{itemize}
+\subsubsection{Atributos}
+\begin{itemize}
+\item fichero : string \newline
+El fichero del que procede el bitmap.
+\item bitmap : bitmap option \newline
+El bitmap de la textura.
+\end{itemize}
+\subsubsection{Métodos}
+\begin{itemize}
+\item +fichero : string 
+\item +bitmap : bitmap option \newline
+Getters.
+\item +set\_bitmap (b:bitmap) \newline
+Cambia el bitmap.
+\end{itemize}
+\subsubsection{Parámetros de instanciación}
+\begin{itemize}
+\item f : string \newline
+El nombre del fichero.
+\end{itemize}
+
+
+\subsection{textura\_bitmap}
+\subsubsection{Relaciones}
+\begin{itemize}
+\item Es una especificación de \Clase{c\_textura\_bitmap}.
+\end{itemize}
+\subsubsection{Métodos}
+\begin{itemize}
+\item +inicializador \newline
+Se agrega a sí mismo al contador Geo.contador\_textura\_bitmap.
+\end{itemize}
+\subsubsection{Parámetros de instanciación}
+\begin{itemize}
+\item f : string \newline
+El nombre del fichero.
+\end{itemize}
+
+
+\subsection{c\_no\_textura}
+\subsubsection{Relaciones}
+\begin{itemize}
+\item Es una especificación de \Clase{textura}.
+\end{itemize}
+
+\subsection{no\_textura}
+\subsubsection{Relaciones}
+\begin{itemize}
+\item Es una especificación de \Clase{c\_no\_textura}.
+\end{itemize}
+\subsubsection{Métodos}
+\begin{itemize}
+\item +inicializador \newline
+Se agrega a sí mismo al contador Geo.contador\_no\_textura.
+\end{itemize}
+
+\subsection{material\_simple}
+\subsubsection{Relaciones}
+\begin{itemize}
+\item Es una especificación de \Clase{material}.
+\item Depende de \Clase{textura}.
+\end{itemize}
+\subsubsection{Atributos}
+\begin{itemize}
+\item color\_ambiente : color\newline
+La componente ambiente del color del material.
+\item color\_difuso : color\newline
+La componente difusa del color del material.
+\item color\_especular : color\newline
+La componente especular del color del material.
+\item brillo : float\newline
+El factor de brillo del material, entre 0 y 100. Un valor bajo significa que el material está poco pulido y los brillos son grandes. Un valor alto significa que el material está muy pulido y los brillos son pequeños.
+\item color\_emision : color\newline
+La componente de color que emite el material.
+\item modificador\_color\_vertice : t\_modificador\_color\_vertice option \newline
+La manera que influencia el color del vértice al color del material.
+\item textura : textura \newline
+La textura del material.
+\end{itemize}
+\subsubsection{Métodos}
+\begin{itemize}
+\item +color\_ambiente : color 
+\item +color\_difuso : color 
+\item +color\_especular : color 
+\item +brillo : float
+\item +color\_emisión : color 
+\item +modificador\_color\_vertice : t\_modificador\_color option
+\item +textura : color \newline
+Getters.
+\item +cambia\_color\_ambiente : color 
+\item +cambia\_color\_difuso : color 
+\item +cambia\_color\_especular : color 
+\item +cambia\_brillo : float
+\item +cambia\_color\_emisión : color 
+\item +cambia\_modificador\_color\_vertice : t\_modificador\_color option
+\item +cambia\_textura : color \newline
+Setters.
+\end{itemize}
+\subsubsection{Parámetros de instanciación}
+\begin{itemize}
+\item c\_ambiente : color
+\item c\_difuso : color
+\item (c\_especular,ang\_especular) : (color*float)
+\item c\_emision : color
+\item t : textura \newline
+Los atributos de la clase.
+\end{itemize}
+
+\subsection{capa\_simple}
+\subsubsection{Relaciones}
+\begin{itemize}
+\item Es una especificación de \Clase{capa}.
+\item Depende de \Clase{material\_simple}.
+\end{itemize}
+\subsubsection{Atributos}
+\begin{itemize}
+\item material : material\_simple \newline
+El material asociado a la capa.
+\end{itemize}
+\subsubsection{Métodos}
+\begin{itemize}
+\item +material : material
+\item +material\_simple : material\_simple \newline
+Getters.
+\item +cambia\_material (nm : material\_simple) \newline
+Setter.
+\end{itemize}
+\subsubsection{Parámetros de instanciación}
+\begin{itemize}
+\item m : material\_simple \newline
+El material de la capa.
+\end{itemize}
+
+\subsection{poligono\_simple}
+\subsubsection{Relaciones}
+\begin{itemize}
+\item Es una especificación de \Clase{poligono}.
+\item Depende de \Clase{vertice\_simple}.
+\item Depende de \Clase{capa\_simple}.
+\end{itemize}
+\subsubsection{Atributos}
+\begin{itemize}
+\item vertices : vertice\_simple list \newline
+Los vértices del polígono en orden.
+\item capas : capa\_simple list \newline
+Las capas que tiene el polígono, en orden.
+\end{itemize}
+\subsubsection{Métodos}
+\begin{itemize}
+\item +vertices : vertice list
+\item +capas : capa list
+\item +vertices\_simples : vertice\_simple list
+\item +capas\_simples : capa\_simple list \newline
+Getters.
+\end{itemize}
+\subsubsection{Parámetros de instanciación}
+\begin{itemize}
+\item v : vertice\_simple list
+\item c : capa\_simple list \newline
+Los atributos de la clase.
+\end{itemize}
+
+\subsection{c\_malla\_simple}
+\subsubsection{Relaciones}
+\begin{itemize}
+\item Es una especificación de \Clase{malla}.
+\item Depende de \Clase{poligono\_simple}, \Clase{vertice\_simple} y \Clase{material\_simple}.
+\end{itemize}
+\subsubsection{Atributos}
+\begin{itemize}
+\item poligonos : poligono\_simple list \newline
+Los polígonos que componen la malla.
+\item vertices : vertice\_simple list \newline
+Los vértices de todos los polígonos asociados a la malla.
+\item materiales : materiales\_simple list \newline
+Los materiales de las capas de todos los polígonos asociados a la malla.
+\end{itemize}
+\subsubsection{Métodos}
+\begin{itemize}
+\item +poligonos : poligono list
+\item +poligonos\_simples : poligono\_simple list
+\item +vertices : vertice list
+\item +vertices\_simples : vertice\_simple list
+\item +materiales : material list
+\item +materiales\_simples : material\_simple list \newline
+Getters.
+\end{itemize}
+\subsubsection{Parámetros de instanciación}
+\begin{itemize}
+\item p : poligono\_simple list
+\item v : vertice\_simple list
+\item m : material\_simple list \newline
+Los atributos de la clase.
+\end{itemize}
+
+\subsection{malla\_simple}
+\subsubsection{Relaciones}
+\begin{itemize}
+\item Es una especificación de \Clase{c\_malla\_simple}.
+\end{itemize}
+\subsubsection{Métodos}
+\begin{itemize}
+\item +inicializador \newline
+Se agrega a sí mismo al contador Geo.contador\_malla\_simple.
+\end{itemize}
+\subsubsection{Parámetros de instanciación}
+\begin{itemize}
+\item p : poligono\_simple list
+\item v : vertice\_simple list
+\item m : material\_simple list \newline
+Los atributos para instanciar \Clase{c\_malla\_simple}.
+\end{itemize}
+
+\subsection{cargador\_malla}
+
+\section{Bitmaps}
+\subsection{c\_bitmap\_RGBA}
+\subsubsection{Relaciones}
+\begin{itemize}
+\item Es una especificación de \Clase{bitmap}.
+\end{itemize}
+\subsubsection{Atributos}
+\begin{itemize}
+\item dim\_x : int 
+\item dim\_y : int \newline
+Las dimensiones del bitmap.
+\item bpp : int \newline
+La profundidad o bits por pixel del bitmap.
+\item contenido : string \newline
+El bitmap como una cadena de bytes.
+\end{itemize}
+\subsubsection{Métodos}
+\begin{itemize}
+\item +dim\_x : int
+\item +dim\_y : int
+\item +contenido : string \newline
+Getters.
+\item +bits\_por\_pixel : int \newline
+La profundidad de color del bitmap.
+\item +bytes\_por\_pixel : int \newline
+La profundidad de color del bitmap en bytes (8 bits).
+\item +get\_pixel ((x,y):(int*int)) : color \newline
+Obtiene el color de un pixel especificado por las coordenadas (x,y).
+\item +formato\_color : (int32 * int32 * int32 * int32) \newline
+La manera de almacenar el color. Los enteros int32 almacenan una máscara de bits que define de cada 32 bits cuáles se dedican a cada color. El primer int32 se refiere al color rojo, el segundo al verde, el tercero al azul y el cuarto a la transparencia o alfa de la imagen. \newline
+Para una imagen de 32 bits de profundidad de color devuelve (en hexadecimal): (FF000000, 00FF0000, 0000FF00, 000000FF).\newline
+Para una imagen de 24 bits de profundidad de color devuelve: (00FF0000, 0000FF00, 000000FF, 00000000)
+\end{itemize}
+\subsubsection{Parámetros de instanciación}
+\begin{itemize}
+\item dx : int
+\item dy : int \newline
+Las dimensiones del bitmap.
+\item bp : int \newline
+La profundidad de color del bitmap.
+\item d : string \newline
+El contenido del bitmap.
+\end{itemize}
+
+
+\subsection{bitmap\_RGBA}
+\subsubsection{Relaciones}
+\begin{itemize}
+\item Es una especificación de \Clase{c\_bitmap\_RGBA}.
+\end{itemize}
+\subsubsection{Métodos}
+\begin{itemize}
+\item +inicializador \newline
+Se agrega a sí mismo al contador Bitmaps.contador\_bitmap\_RGBA.
+\end{itemize}
+\subsubsection{Parámetros de instanciación}
+\begin{itemize}
+\item dx : int
+\item dy : int
+\item bp : int
+\item d : string
+Parámetros para instanciar \Clase{c\_bitmap\_RGBA}.
+\end{itemize}
+
+\subsection{cargador\_cadena\_bitmap}
+\subsubsection{Relaciones}
+\begin{itemize}
+\item Es una especificación de \Clase{Recursos.cargador}.
+\end{itemize}
+\subsubsection{Atributos}
+\begin{itemize}
+\item fichero : string \newline
+El fichero desde el que se cargará el bitmap.
+\item contenido : (int * int * string * int) option \newline
+Almacena los datos para instanciar el bitmap una vez ha sido cargado. El formato es (ancho, alto, contenido, profundidad).
+\end{itemize}
+\subsubsection{Métodos}
+\begin{itemize}
+\item +cargar \newline
+Carga los datos para el bitmap especificado por fichero.
+\item +descargar \newline
+Descarga los datos para el bitmap.
+\item +obtener : (int * int * string * int) \newline
+Devuelve los datos para el bitmap si están disponibles, si no falla.
+\item +clonar : (int * int * string * int) \newline
+Devuelve una copia de los datos para el bitmap si están disponibles, si no falla.
+\end{itemize}
+\subsubsection{Parámetros de instanciación}
+\begin{itemize}
+\item f : string \newline
+El nombre del fichero desde el que se cargarán los datos.
+\end{itemize}
+
+\subsection{recurso\_bitmap\_RGBA}
+\subsubsection{Relaciones}
+\begin{itemize}
+\item Es una especificación de \Clase{Recursos.instanciador}.
+\item Instancia \Clase{cargador\_cadena\_bitmap}.
+\item Instancia \Clase{bitmap\_RGBA}.
+\end{itemize}
+\subsubsection{Métodos}
+\begin{itemize}
+\item +instanciar (w,h,str,bpp):(int * int * string * int) : bitmap\_RGBA \newline
+Instancia el bitmap a partir de los datos necesarios para su instanciación.
+\end{itemize}
+\subsubsection{Parámetros de instanciación}
+\begin{itemize}
+\item f : string \newline
+El nombre del fichero desde el que se cargará el bitmap.
+\end{itemize}
+
+
+\section{Cargador de geometría simple}
+\subsection{cargador}
+\subsubsection{Relaciones}
+\begin{itemize}
+\item Es una especificación de \Clase{cargador\_malla}.
+\item Depende de \Clase{Ficheros.dispositivo\_entrada\_caracteres}.
+\item Depende de \Clase{malla}.
+\item Depende de \Clase{malla\_simple}.
+\end{itemize}
+\subsubsection{Métodos}
+\begin{itemize}
+\item cargar\_malla\_simple (f:Ficheros.dispositivo\_entrada\_caracteres) : malla\_simple \newline
+Carga la malla del fichero pasado como parámetro.
+\item cargar\_malla (f:Ficheros.dispositivo\_entrada\_caracteres) : malla \newline
+Carga la malla del fichero pasado como parámetro, pero la devuelve como \Clase{malla} y no \Clase{malla\_simple}.
+\end{itemize}
+
+

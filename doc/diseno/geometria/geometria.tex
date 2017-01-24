@@ -1,0 +1,168 @@
+\chapter{Diseño del subsistema Geometría}
+En esta sección se trata el subsistema Geometría. Este subsistema ha sido propuesto como una estructura de datos pensada para almacenar geometría. 
+
+Con el fin de permitir que el sistema sea extendido más adelante, pero manteniendo las estructuras básicas, cada clase de análisis ha sido dividida en una abstracta y una concreta. En este caso la concreta implementa el modelo más sencillo de malla.
+
+Además, ha sido añadido el mecanismo para cargar mallas, a través de una fábrica abstracta.
+
+\section{Vista de casos de uso}
+A pesar de que ningún caso de uso de análisis afecta directamente a este subsistema, se hace necesario documentar los mecanismos de carga de mallas y dibujado de las mismas.
+\subsection{Carga de mallas}
+Este caso de uso implementa la carga de una malla de polígonos. En este caso concreto se indica la carga de una malla simple mediante la fábrica correspondiente. A continuación se especifica el flujo de eventos.
+
+%------------------------------------------- Copypaste
+\renewcommand{\labelenumi}{%
+ \textbf{\theenumi}.-
+}
+
+\renewcommand{\theenumii}{\arabic{enumii}}
+\renewcommand{\labelenumii}{%
+ \textbf{\theenumi}.\theenumii.-
+}
+
+\renewcommand{\theenumiii}{\arabic{enumiii}}
+\renewcommand{\labelenumiii}{%
+ \textbf{\theenumi}.\theenumii.\theenumiii.-
+}
+
+%-----------------------------------------------------
+\begin{enumerate}
+\item El cliente prepara fichero:Dispositivo\_entrada\_caracteres.
+\item El cliente llama fábrica.cargar\_malla(fichero), siendo fábrica:Cargador\_malla.
+\item Fábrica procesa la llamada y procede a cargar el fichero.
+	\begin{enumerate}
+	\item Para cada coordenada, normal, color y uv del fichero:
+		\begin{enumerate}
+		\item Carga el dato
+		\item Instancia el elemento
+		\end{enumerate}
+	\item Para cada vértice del fichero:
+		\begin{enumerate}
+		\item Carga información del vértice
+		\item Prepara asociaciones del vértice
+		\item Instancia el vértice
+		\end{enumerate}
+	\item Para cada material del fichero:
+		\begin{enumerate}
+		\item Carga información del material
+		\item Instancia el material
+		\item Instancia una capa
+		\item Enlaza la capa al material
+		\end{enumerate}
+	\item Para cada polígono del fichero:
+		\begin{enumerate}
+		\item Carga información del polígono
+		\item Prepara asociaciones del polígono
+		\item Instancia el polígono
+		\end{enumerate}
+	\item Prepara asociaciones de la malla
+	\item Instancia la malla
+	\end{enumerate}
+\item Fábrica devuelve la malla instanciada.
+\end{enumerate}
+
+Como se puede apreciar, el proceso de carga no es trivial, pero es sencillo de comprender. Básicamente, Fábrica se encarga de cargar la malla e instanciar todos los objetos.
+
+\subsection{Mecanismo de dibujado}
+El mecanismo de dibujado de mallas es complejo, ya que se pretende que sea desacoplable del mecanismo concreto. Por ello se propone utilizar el patrón observador. Este patrón se encargará de llevar los cambios que se produzcan en el motor gráfico al motor concreto de pintado.
+
+Por ello, todas las clases significativas de ser pintadas en pantalla o de influenciar lo que se pinte en pantalla serán \emph{sujetos} en el patrón.
+
+Inicialmente no se propone un mecanismo de pintado concreto. Sin embargo, es evidente que es necesario pintar la escena en pantalla, y por eso se implementará un ejemplo de motor en OpenGL, que es donde se alojarán algunas de las clases \emph{observador} del patrón.
+
+El mecanismo final de pintado de mallas será por tanto un mecanismo doble. Por una parte está el modelo abstracto de geometría, definido por las clases que se encuentran en el motor gráfico. Y por otra parte está el modelo optimizado al mecanismo concreto de pintado, definido por las clases en el motor concreto de pintado, en este caso Motor OpenGL. Este último modelo será el que realmente se pinte en pantalla, y será guiado y actualizado por el modelo abstracto a través del patrón observador.
+
+
+
+
+\section{Vista lógica}
+Debido a que es posible que algunas mallas no se dibujen en pantalla (se utilicen para detección de colisiones, por ejemplo) y a que puede ser interesante desarrollar más tipos de malla más adelante, se hace necesario \emph{llevar la cuenta} de las mallas que se vayan a dibujar y su tipo. Esto hace aparecer algunas clases \emph{contador}, que no son más que agregadores bajo el estereotipo <<singleton>>.
+
+Se ha optado por separar las clases en una abstracción y una implementación. Esto se hace con el fin de facilitar la creación de nuevos tipos de malla, y su posterior utilización por parte de la lógica del juego. Por otra parte, se propone a la hora de crear nuevos tipos de malla que se utilice herencia a partir de la abstracción, especificando a partir de la clase origen \emph{y} de sus relaciones. A efectos prácticos, la abstracción se utiliza como una interfaz.
+
+A continuación se describirán las clases principales del sistema.
+
+\subsection{Malla}
+Almacena una malla de polígonos.
+\begin{itemize}
+\item \textbf{Responsabilidades:}
+	\begin{itemize}
+	\item Almacenar una malla de polígonos.
+	\end{itemize}
+\item \textbf{Relaciones:}
+	\begin{itemize}
+	\item -polígonos : colección de polígono \newline
+		Los polígonos de la malla.
+	\end{itemize}
+\item \textbf{Métodos:}
+	\begin{itemize}
+	\item +polígonos() : colección de polígono \newline
+		Los polígonos de la malla.
+	\end{itemize}
+\end{itemize}
+
+\subsection{Malla\_simple}
+Representa una malla de polígonos sencilla. No tiene animación, ni controles externos. Es el modelo de malla con materiales, capas y texturas más sencillo.
+\begin{itemize}
+\item \textbf{Responsabilidades:}
+	\begin{itemize}
+	\item Almacenar una malla de polígonos.
+	\end{itemize}
+\item \textbf{Relaciones:}
+	\begin{itemize}
+	\item -polígonos : colección de polígono \newline
+		Los polígonos de la malla.
+	\item Es una especificación de Malla. Implementa por tanto una variante de Malla.
+	\end{itemize}
+\item \textbf{Métodos:}
+	\begin{itemize}
+	\item +polígonos() : colección de polígono \newline
+		Los polígonos de la malla.
+	\end{itemize}
+\end{itemize}
+
+\subsection{Cargador\_malla}
+Provee un interfaz para crear una fábrica de mallas.
+\begin{itemize}
+\item \textbf{Responsabilidades:}
+	\begin{itemize}
+	\item Cargar e instanciar una malla.
+	\end{itemize}
+\item \textbf{Relaciones:}
+	\begin{itemize}
+	\item <<access>> Dispositivo\_entrada\_caracteres \newline
+		Lee la información de la malla del dispositivo entregado.
+	\item <<instantiate>> Malla. \newline
+		Instancia mallas.
+	\end{itemize}
+\item \textbf{Métodos:}
+	\begin{itemize}
+	\item +\emph{cargar}(d : Dispositivo\_entrada\_caracteres) : malla \newline
+		Carga una malla desde el dispositivo indicado. Falla si el dispositivo no contiene la información de la malla en el formato correcto.
+	\end{itemize}
+\end{itemize}
+
+\subsection{Cargador\_malla\_simple}
+Se encarga de cargar e instanciar Malla\_simple
+\begin{itemize}
+\item \textbf{Responsabilidades:}
+	\begin{itemize}
+	\item Leer la información de una Malla\_simple e instanciarla.
+	\end{itemize}
+\item \textbf{Relaciones:}
+	\begin{itemize}
+	\item <<instantiate>> Malla\_simple. \newline
+		Instancia Malla\_simple.
+	\end{itemize}
+\item \textbf{Métodos:}
+	\begin{itemize}
+	\item +cargar(d : Dispositivo\_entrada\_caracteres) : malla \newline
+		Llama a cargar\_malla\_simple.
+	\item +cargar\_malla\_simple(d : Dispositivo\_entrada\_caracteres) : Malla\_simple \newline
+		Carga e instancia una Malla\_simple desde el dispositivo de entrada indicado. No se ha especificado, pero este método puede ser muy complicado, incluyendo un lexer y un parser con el fin de leer ficheros y comprobar que es correcta la sintaxis.
+	\end{itemize}
+\end{itemize}
+
+
+
+

@@ -1,0 +1,84 @@
+\chapter{Diseño detallado de las clases}
+
+\section{Cargador\_malla\_simple}
+Se encarga de cargar e instanciar Malla\_simple. Incluye un lexer y un parser que se encargan de la lectura del fichero. Tanto el lexer como el parser se harán con herramientas ya disponibles: OcamlLex y OcamlYACC.
+
+OcamlLex y OcamlYACC generan cada uno un módulo nuevo que es utilizado por Cargador\_malla\_simple. Estos módulos se llaman \emph{Cargador\_malla\_lexer} y \emph{Cargador\_malla\_parser}.
+
+\begin{itemize}
+\item \textbf{Relaciones:}
+	\begin{itemize}
+	\item <<instantiate>> Clases del tipo *\_simple. \newline
+		Instancia Malla\_simple y las clases que utilice Malla\_simple. Además, realiza la interconexión de estas clases.
+	\item <<uso>> Utiliza una instancia de Dispositivo\_entrada\_caracteres para leer el fichero.
+	\end{itemize}
+\item \textbf{Métodos:}
+	\begin{itemize}
+	\item +cargar(d : Dispositivo\_entrada\_caracteres) : malla \newline
+		Llama a cargar\_malla\_simple. Devuelve el resultado como malla, y no malla\_simple, con el fin de utilizarlo para algún tipo de cargador abstracto.
+	\item +cargar\_malla\_simple(d : Dispositivo\_entrada\_caracteres) : Malla\_simple \newline
+		Carga e instancia una Malla\_simple desde el dispositivo de entrada indicado.
+	\end{itemize}
+\end{itemize}
+
+\subsection{El lexer}
+El lexer se encarga de leer los caracteres del fichero y transformarlos en elementos de preanálisis para el parser. A continuación se describen estos elementos.
+
+\newcommand{\elemento}[2]{\item \textbf{#1} \newline #2}
+\begin{itemize}
+\elemento{\emph{espacio en blanco}}{Ignorado}
+\elemento{\emph{tabulador}}{Ignorado}
+\elemento{\emph{retorno de carro}}{Ignorado}
+\elemento{\#, \emph{cualquier caracter excepto retorno de carro}, \emph{retorno de carro}}{Ignorado, es un comentario}
+\elemento{\emph{número real}}{REAL}
+\elemento{\emph{número entero}}{ENTERO}
+\elemento{", \emph{cadena de caracteres}, "}{CADENA}
+\elemento{version}{VERSION}
+\elemento{o}{OBJETO}
+\elemento{nv}{NUMVERTICES}
+\elemento{v}{VERTICE}
+\elemento{nm}{NUMMATERIALES}
+\elemento{m}{MATERIAL}
+\elemento{tex}{TEXTURA}
+\elemento{notex}{NOTEXTURA}
+\elemento{esp}{ESPECULAR}
+\elemento{emi}{EMISION}
+\elemento{nf}{NUMCARAS}
+\elemento{f}{CARA}
+\elemento{fm}{MATERIAL\_CARA}
+\elemento{fv}{VERTICE\_CARA}
+\elemento{fvuc}{VERTICE\_CARA\_UV\_COLOR}
+\elemento{\emph{fin de fichero}}{EOF}
+\end{itemize}
+
+\subsection{El parser}
+El parser se encarga de procesar los elementos de preanálisis del lexer, comprobar que siguen la sintaxis especificada y construir la malla a partir de la información del fichero. A continuación se especifican las reglas del parser.
+
+En mayúsculas, los terminales definidos en la sección anterior. En minúsculas, los auxiliares. Cada palabra es un \emph{símbolo}. 
+
+Símbolo inicial: main\newline
+\newcommand{\regla}[2]{\item\textbf{#1} -\textgreater \newline #2}
+\begin{itemize}
+\regla{main}{version nombre vertices materiales caras EOF}
+\regla{version}{VERSION REAL}
+\regla{nombre}{OBJETO CADENA}
+\regla{vertices}{NUMVERTICES ENTERO desc\_vertices}
+\regla{desc\_vertices}{desc\_vertice desc\_vertices \newline \textbar desc\_vertice}
+\regla{desc\_vertice}{VERTICE REAL REAL REAL REAL REAL REAL}
+\regla{materiales}{NUMMATERIALES ENTERO desc\_materiales}
+\regla{desc\_materiales}{desc\_material desc\_materiales \newline \textbar desc\_material}
+\regla{desc\_material}{MATERIAL CADENA textura difuso especular emision}
+\regla{textura}{TEXTURA CADENA \newline \textbar NOTEXTURA}
+\regla{difuso}{DIFUSO REAL REAL REAL REAL}
+\regla{especular}{ESPECULAR REAL REAL REAL REAL REAL}
+\regla{emisión}{EMISION REAL REAL REAL REAL}
+\regla{caras}{NUMCARAS ENTERO desc\_caras}
+\regla{desc\_caras}{desc\_cara desc\_caras \newline \textbar desc\_cara}
+\regla{desc\_cara}{CARA material\_cara vertices\_cara}
+\regla{material\_cara}{MATERIAL\_CARA ENTERO}
+\regla{vertices\_cara}{vertice\_cara vertice\_cara vertice\_cara \newline \textbar vertice\_cara vertice\_cara vertice\_cara vertice\_cara}
+\regla{vertice\_cara}{VERTICE\_CARA ENTERO \newline \textbar VERTICE\_CARA\_UV\_COLOR ENTERO REAL REAL REAL REAL REAL REAL}
+\end{itemize}
+
+
+

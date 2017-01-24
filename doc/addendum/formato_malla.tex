@@ -1,0 +1,293 @@
+\chapter{Formato de malla exportada desde Blender V1.0}
+El formato de malla exportado desde Blender cumple con la función de facilitar la importación de geometría dentro del sistema. Por simplicidad y con el fin de facilitar su utilización dentro de Blender, se ha diseñado con las siguientes características:
+
+\begin{itemize}
+\item Por cada malla:
+	\begin{itemize}
+	\item Cualquier cantidad de polígonos.
+	\item Cualquier cantidad de vértices.
+	\item Cualquier cantidad de materiales.
+	\end{itemize}
+\item Por cada polígono:
+	\begin{itemize}
+	\item 3 o 4 vértices.
+	\item 1 material.
+	\end{itemize}
+\item Por cada vértice de cada polígono:
+	\begin{itemize}
+	\item 1 coordenada.
+	\item 1 normal.
+	\item 0 o 1 color.
+	\item 0 o 1 coordenada UV.
+	\end{itemize}
+\item Por cada material:
+	\begin{itemize}
+	\item 0 o 1 textura.
+	\item 1 descripción de color difuso.
+	\item 1 descripción de color especular.
+	\item 1 descripción de color de emisión.
+	\end{itemize}
+\end{itemize}
+
+
+Como inspiración se ha tomado el formato de malla OBJ de Wavefront, pero se ha creado uno completamente distinto adaptado a la situación. Ese formato es el que exporta el \emph{script} de Blender, y que el sistema está preparado para leer. A continuación se describirá dicho formato.
+
+Los ficheros están compuestos de 4 partes significativas, situadas en este orden:
+\begin{enumerate}
+\item Cabecera.
+\item Definición de coordenadas.
+\item Definición de materiales.
+\item Definición de polígonos.
+\end{enumerate}
+
+Los ficheros son de texto normal y corriente, y aunque sufren de velocidad de carga y tamaño son resistentes a cambios dependientes de la arquitectura. La información del fichero se almacena en forma de líneas, comenzando cada línea por un \emph{comando} seguido por sus parámetros. Si una línea empieza por \emph{\#} (almohadilla) la línea se considera un comentario, y es ignorada hasta el fin de línea.
+
+A continuación se especifica cada uno de los comandos y el orden en que deben aparecer en el fichero, además de si se repiten o no.
+
+
+\section{Cabecera}
+\subsection{Versión}
+\begin{verbatim}
+version 1.0
+\end{verbatim}
+Especifica la versión del formato de archivo que lleva el fichero. Esto se usa para evitar intentar leer un fichero con un lector que no esté preparado para esa versión. Por ahora sólo se ha definido la versión 1.0.
+
+\subsection{Nombre de la malla}
+\begin{verbatim}
+o "<Nombre malla>"
+\end{verbatim}
+Especifica un nombre para la malla. El nombre se especifica entre las comillas dobles.
+
+\section{Definición de coordenadas}
+\subsection{Número de vértices}
+\begin{verbatim}
+nv <nº de vértices>
+\end{verbatim}
+Especifica el número de coordenadas distintas que tendrá la malla. Debe coincidir con el cardinal de los vértices especificados.
+
+\subsection{Vértice}
+\begin{verbatim}
+v x y z nx ny nz
+\end{verbatim}
+Especifica un vértice. El primer vértice definido en el fichero será numerado como el vértice nº 0, el segundo será el nº 1 y así sucesivamente.
+
+Los tres reales (x,y,z) especifican las coordenadas del vértice.
+
+Los tres reales (nx,ny,nz) especifican la normal del vértice, es decir, la normal de la malla en ese punto. Debe ser un vector unitario (de longitud 1).
+
+\section{Definición de materiales}
+\subsection{Número de materiales}
+\begin{verbatim}
+nm <numero de materiales>
+\end{verbatim}
+Especifica el número de materiales que tendrá la malla. Debe coincidir con el cardinal de materiales especificados.
+
+\subsection{Definición de material}
+\subsubsection{Nombre del material}
+\begin{verbatim}
+m "<nombre del material>"
+\end{verbatim}
+Especifica el comienzo de definición de un material, y le asigna un nombre. El primer material será numerado como el material nº 0, el segundo material como el material nº 1 y así sucesivamente.
+
+\subsubsection{Textura del material}
+Hay dos opciones mutuamente excluyentes para este campo:
+\begin{verbatim}
+tex "<ruta de la textura>"
+\end{verbatim}
+Especifica un fichero de imagen con la textura del material.
+
+\begin{verbatim}
+notex
+\end{verbatim}
+Especifica que el material no tiene textura asociada.
+
+\subsubsection{Color difuso}
+\begin{verbatim}
+dif r g b a
+\end{verbatim}
+Especifica el color difuso del material. El color difuso es el color normal del material iluminado por una luz difusa.
+
+Los tres reales (r,g,b) especifican el color difuso, y el real (a) especifica el valor de transparencia. Todos estos valores deben pertenecer al rango [0,1]. Este valor es el valor \emph{por defecto}, y se aplica a los vértices que no lleven asociado color.
+
+\subsubsection{Color especular}
+\begin{verbatim}
+esp r g b a factor
+\end{verbatim}
+Especifica el color especular del material. El color especular es el color de los destellos y reflejos del material.
+
+Los tres reales (r,g,b) especifican el color difuso, y el real (a) especifica el valor de transparencia. Todos estos valores deben pertenecer al rango [0,1].
+
+El real (factor) especifica el factor de pulido de la superficie. Un valor de 0 especifica una superficie rugosa, sin reflexión; mientras que un valor de 100 especifica una superficie extremadamente pulida, como un espejo.
+
+\subsubsection{Color de emisión}
+\begin{verbatim}
+emi r g b a
+\end{verbatim}
+Especifica el color de emisión del material. El color de emisión es un color innato al material, y hace que sea visible incluso en la oscuridad.
+
+Los tres reales (r,g,b) especifican el color difuso, y el real (a) especifica el valor de transparencia. Todos estos valores deben pertenecer al rango [0,1].
+
+\section{Definición de caras}
+\subsection{Número de caras}
+\begin{verbatim}
+nf <numero de caras>
+\end{verbatim}
+Especifica la cantidad de caras que tendrá la malla. Debe coincidir con el cardinal de caras especificadas.
+
+\subsection{Definición de una cara}
+\subsubsection{Cabecera}
+\begin{verbatim}
+f
+\end{verbatim}
+Cada cara especificada empieza por esta cabecera.
+
+\subsubsection{Material de la cara}
+\begin{verbatim}
+fm <índice del material>
+\end{verbatim}
+Especifica el material de la cara, que es un entero que especifica el material concreto de la lista de materiales.
+
+\subsubsection{Especificación de vértice}
+Hay dos posibilidades para especificar un vértice: especificar color y coordenadas UV o no. Esto se aplica por igual a todos los vértices de un polígono. Además, si la cara tiene un material con textura asociada, es necesario especificar coordenadas UV.
+
+\begin{verbatim}
+fvuc i u v r g b a
+\end{verbatim}
+Especifica un vértice de polígono con coordenadas UV y color difuso.
+
+El entero i especifica que el vértice tendrá la coordenada y normal especificadas en el vertice i-esimo definido más arriba.
+
+La pareja de reales (u,v) especifican las coordenadas UV o de texturizado del vértice.
+
+Los cuatro reales (r,g,b,a) especifican el color y el componente de transparencia.
+
+\begin{verbatim}
+fv i
+\end{verbatim}
+Especifica un vértice de polígono, sin coordenadas UV ni color difuso.
+
+El entero i especifica que el vértice tendrá la coordenada y normal especificadas en el vertice i-esimo definido más arriba.
+
+
+\section{Formato de datos}
+En esta sección se especifica el formato que tendrán las entradas.
+\subsection{Real}
+Representa un número real. Su formato será:
+
+\emph{<signo>}\emph{<cantidad entera}.\emph{<cantidad decimal>}
+
+Donde:
+\begin{itemize}
+\item <signo> es + o -
+\item <cantidad entera> es un número natural
+\item <cantidad decimal> es un número natural
+\end{itemize}
+
+\subsection{Natural}
+Representa un número natural en base 10. Su formato es: 
+
+\{0|1|2|3|4|5|6|7|8|9\}+
+
+Esto es, una o más cifras.
+
+\section{Ejemplo}
+\begin{verbatim}
+# Exportado desde Blender 2.42
+# Se han añadido comentarios para mejorar la lectura
+version 1.0
+
+o "Cubo"
+# 8 vértices
+nv 8
+# vértice 0
+v 1.000000 1.000000 -1.000000 0.577349 0.577349 -0.577349
+# vértice 1
+v 1.000000 -1.000000 -1.000000 0.577349 -0.577349 -0.577349
+v -1.000000 -1.000000 -1.000000 -0.577349 -0.577349 -0.577349
+v -1.000000 1.000000 -1.000000 -0.577349 0.577349 -0.577349
+v 1.000000 1.000000 1.000000 0.577349 0.577349 0.577349
+v 1.000000 -1.000001 1.000000 0.577349 -0.577349 0.577349
+v -1.000000 -1.000000 1.000000 -0.577349 -0.577349 0.577349
+# vértice 7
+v -1.000000 1.000000 1.000000 -0.577349 0.577349 0.577349
+
+# 2 materiales
+nm 2
+
+# material 0
+m "Sin_textura"
+# Sin textura
+notex
+# Color gris claro
+dif 0.8 0.8 0.8 1.0
+# Sin reflejos
+esp 0.0 0.0 0.0 1.0 0.0
+# Sin emisión
+emi 0.0 0.0 0.0 1.0
+
+# material 1
+m "Caja"
+# Textura especificada
+tex "caja.tga"
+dif 0.8 0.8 0.8 1.0
+esp 0.0 0.0 0.0 1.0 0.0
+emi 0.0 0.0 0.0 1.0
+
+
+# 6 caras
+nf 6
+
+# Definición de cara
+f
+# Material de la cara: Sin_textura
+fm 0
+# Vértice:
+# Especificación del vértice 0
+# Coordenadas: (1.0, 1.0, -1.0)
+# Normal: (0.577349, 0.577349, -0.577349)
+# UV: (0.0, 0.0)
+# Color: (1.0, 1.0, 1.0, 1.0): Blanco
+fvuc 0 0.000000 0.000000 1.000000 1.000000 1.000000 1.000000
+fvuc 1 0.000000 -1.000000 1.000000 1.000000 1.000000 1.000000
+fvuc 2 -1.000000 -1.000000 1.000000 1.000000 1.000000 1.000000
+fvuc 3 -1.000000 0.000000 1.000000 1.000000 1.000000 1.000000
+
+# Otra cara
+f
+# Con otro material distinto: Caja
+fm 1
+fvuc 4 0.000000 1.000000 1.000000 1.000000 1.000000 1.000000
+fvuc 7 -1.000000 1.000000 1.000000 1.000000 1.000000 1.000000
+fvuc 6 -1.000000 0.000000 1.000000 1.000000 1.000000 1.000000
+fvuc 5 -0.000000 -0.000000 1.000000 1.000000 1.000000 1.000000
+
+f
+fm 0
+fvuc 0 0.000000 0.000000 1.000000 1.000000 1.000000 1.000000
+fvuc 4 -0.000000 1.000000 1.000000 1.000000 1.000000 1.000000
+fvuc 5 -1.000000 1.000000 1.000000 1.000000 1.000000 1.000000
+fvuc 1 -1.000000 0.000000 1.000000 1.000000 1.000000 1.000000
+
+f
+fm 0
+fvuc 1 0.000000 0.000000 1.000000 1.000000 1.000000 1.000000
+fvuc 5 -0.000000 1.000000 1.000000 1.000000 1.000000 1.000000
+fvuc 6 -1.000000 1.000000 1.000000 1.000000 1.000000 1.000000
+fvuc 2 -1.000000 0.000000 1.000000 1.000000 1.000000 1.000000
+
+f
+fm 0
+fvuc 2 0.000000 0.000000 1.000000 1.000000 1.000000 1.000000
+fvuc 6 0.000000 1.000000 1.000000 1.000000 1.000000 1.000000
+fvuc 7 1.000000 1.000000 1.000000 1.000000 1.000000 1.000000
+fvuc 3 1.000000 0.000000 1.000000 1.000000 1.000000 1.000000
+
+f
+fm 0
+fvuc 4 0.000000 0.000000 1.000000 1.000000 1.000000 1.000000
+fvuc 0 0.000000 -1.000000 1.000000 1.000000 1.000000 1.000000
+fvuc 3 -1.000000 -1.000000 1.000000 1.000000 1.000000 1.000000
+fvuc 7 -1.000000 0.000000 1.000000 1.000000 1.000000 1.000000
+
+
+\end{verbatim}

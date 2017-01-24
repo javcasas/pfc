@@ -1,0 +1,252 @@
+%\subsubsection{Relaciones}
+%\begin{itemize}
+%\end{itemize}
+%\subsubsection{Atributos}
+%\begin{itemize}
+%\end{itemize}
+%\subsubsection{Métodos}
+%\begin{itemize}
+%\item +inicializador \newline
+%\end{itemize}
+%\subsubsection{Parámetros de instanciación}
+%\begin{itemize}
+%\end{itemize}
+
+\chapter{Subsistema Render Abstracto}
+\section{Capas}
+\subsection{\emph{capa}}
+\subsubsection{Relaciones}
+\begin{itemize}
+\item Es una especificación de \Clase{sujeto}, es decir, es un sujeto en un patrón observador.
+\end{itemize}
+%\subsubsection{Atributos}
+%\begin{itemize}
+%\end{itemize}
+%\subsubsection{Métodos}
+%\begin{itemize}
+%\item +inicializador \newline
+%\end{itemize}
+%\subsubsection{Parámetros de instanciación}
+%\begin{itemize}
+%\end{itemize}
+
+\subsection{c\_capa3d}
+\subsubsection{Relaciones}
+\begin{itemize}
+\item Es una especificación de \Clase{capa}.
+\item Depende de \Clase{Objetos.objeto\_origen}.
+\item Depende de \Clase{Objetos.camara}.
+\end{itemize}
+\subsubsection{Atributos}
+\begin{itemize}
+\item objeto\_origen : Objetos.objeto\_origen \newline
+La raíz del árbol de objetos que se pintará en esta capa.
+\item camara : Objetos.camara \newline
+La cámara desde la que se verá la escena. La cámara debe pertenecer a la escena, es decir, debe estar en el mismo árbol de objetos del que objeto\_origen es la raíz.
+\end{itemize}
+\subsubsection{Métodos}
+\begin{itemize}
+\item +objeto\_origen : Objetos.objeto\_origen
+\item +camara : Objetos.camara \newline
+Getters.
+\item +set\_objeto\_origen (ob : Objetos.objeto\_origen)
+\item +set\_camara (cam : Objetos.camara)\newline
+Setters. set\_camara comprueba que la cámara esté en la misma escena que el objeto origen.
+\item +inicializador \newline
+Comprueba que la cámara esté en la misma escena que el objeto origen.
+\end{itemize}
+\subsubsection{Parámetros de instanciación}
+\begin{itemize}
+\item ob:Objetos.objeto\_origen
+\item cam:Objetos.camara \newline
+Los atributos de la clase.
+\end{itemize}
+
+\subsection{capa3d}
+\subsubsection{Relaciones}
+\begin{itemize}
+\item Es una especificación de \Clase{c\_capa3d}.
+\end{itemize}
+\subsubsection{Métodos}
+\begin{itemize}
+\item +inicializador \newline
+Se agrega a sí misma al contador Render.contador\_capa3d.
+\end{itemize}
+\subsubsection{Parámetros de instanciación}
+\begin{itemize}
+\item ob:Objetos.objeto\_origen
+\item cam:Objetos.camara \newline
+Parámetros para \Clase{c\_capa3d}.
+\end{itemize}
+
+\subsection{c\_capa\_nula}
+\subsubsection{Relaciones}
+\begin{itemize}
+\item Es una especificación de \Clase{capa}.
+\end{itemize}
+
+\subsection{capa\_nula}
+\subsubsection{Relaciones}
+\begin{itemize}
+\item Es una especificación de \Clase{c\_capa\_nula}.
+\end{itemize}
+\subsubsection{Métodos}
+\begin{itemize}
+\item +inicializador \newline
+Se agrega a sí misma al contador Render.contador\_capa\_nula.
+\end{itemize}
+
+\subsection{c\_capa\_borrado}
+\subsubsection{Relaciones}
+\begin{itemize}
+\item Es una especificación de \Clase{capa}.
+\item Usa \Clase{Geo.color\_simple}.
+\end{itemize}
+\subsubsection{Atributos}
+\begin{itemize}
+\item color : Geo.color\_simple \newline
+El color que aplica esta capa. Por defecto es negro RGBA(0,0,0,0).
+\end{itemize}
+\subsubsection{Métodos}
+\begin{itemize}
+\item color : Geo.color\_simple\newline
+Getter.
+\item set\_color (c:Geo.color\_simple) \newline
+Setter.
+\end{itemize}
+
+\subsection{capa\_borrado}
+\subsubsection{Relaciones}
+\begin{itemize}
+\item Es una especificación de \Clase{c\_capa\_borrado}.
+\end{itemize}
+\subsubsection{Métodos}
+\begin{itemize}
+\item +inicializador \newline
+Se agrega a sí misma al contador Render.contador\_capa\_borrado.
+\end{itemize}
+
+\subsection{c\_capa\_borrado\_zbuffer}
+\subsubsection{Relaciones}
+\begin{itemize}
+\item Es una especificación de \Clase{capa}.
+\end{itemize}
+
+\subsection{capa\_borrado\_zbuffer}
+\subsubsection{Relaciones}
+\begin{itemize}
+\item Es una especificación de \Clase{c\_capa\_borrado\_zbuffer}.
+\end{itemize}
+\subsubsection{Métodos}
+\begin{itemize}
+\item +inicializador \newline
+Se agrega a sí mismo al contador Render.contador\_capa\_borrado\_zbuffer.
+\end{itemize}
+
+
+\section{Escenas}
+\subsection{c\_escena}
+\subsubsection{Relaciones}
+\begin{itemize}
+\item Depende de \Clase{capa}.
+\item Depende de \Clase{capa\_nula}.
+\end{itemize}
+\subsubsection{Atributos}
+\begin{itemize}
+\item capas : capa array \newline
+Las capas que componen la escena, en orden. Por defecto todas las capas son capas nulas.
+\end{itemize}
+\subsubsection{Métodos}
+\begin{itemize}
+\item capas : capa array
+\item capa (i:int) : capa \newline
+Getters. El número de capa varía entre 1 y num\_capas.
+\item asignar\_capa (c:capa) (i:int) \newline
+Setter. Establece la capa c en el puesto i de capas, donde i varía entre 1 y num\_capas.
+\end{itemize}
+\subsubsection{Parámetros de instanciación}
+\begin{itemize}
+\item num\_capas : int \newline
+El número de capas que tiene esta escena.
+\end{itemize}
+
+\subsection{escena}
+\subsubsection{Relaciones}
+\begin{itemize}
+\item Es una especificación de \Clase{c\_escena}.
+\end{itemize}
+\subsubsection{Métodos}
+\begin{itemize}
+\item +inicializador \newline
+Se asocia a sí mismo al contador Render.contador\_escena.
+\end{itemize}
+\subsubsection{Parámetros de instanciación}
+\begin{itemize}
+\item num\_capas : int \newline
+Parámetro para \Clase{c\_escena}.
+\end{itemize}
+
+\section{Pantallas}
+\subsection{\emph{c\_pantalla}}
+\subsubsection{Relaciones}
+\begin{itemize}
+\item Es una especificación de \Clase{sujeto}, es decir, es un sujeto de un patrón observador.
+\item Depende de \Clase{escena}.
+\end{itemize}
+\subsubsection{Atributos}
+\begin{itemize}
+\item escena : escena option\newline
+La escena que se dibujará en esta pantalla.
+\end{itemize}
+\subsubsection{Métodos}
+\begin{itemize}
+\item +\emph{dimensiones} : (int * int) \newline
+Devuelve el tamaño en píxeles de la pantalla.
+\item escena : escena option \newline
+Getter.
+\item set\_escena (e:escena) \newline
+Setter.
+\end{itemize}
+
+\subsection{\emph{pantalla}}
+\subsubsection{Relaciones}
+\begin{itemize}
+\item Es una especificación de \Clase{c\_pantalla}.
+\end{itemize}
+\subsubsection{Métodos}
+\begin{itemize}
+\item +inicializador \newline
+Se agrega a sí mismo al contador Render.contador\_pantalla.
+\end{itemize}
+
+
+\subsection{monitor}
+\subsubsection{Relaciones}
+\begin{itemize}
+\item Es una especificación de \Clase{pantalla}.
+\end{itemize}
+\subsubsection{Atributos}
+\begin{itemize}
+\item dim\_x : int
+\item dim\_y : int \newline
+Las dimensiones de la pantalla en píxeles.
+\item estado : t\_modo\_pantalla \newline
+El estado de la pantalla, puede ser \emph{ventana} si la aplicación se está ejecutando como una ventana o \emph{pantalla\_completa} si la aplicación se está ejecutando sobre toda la pantalla.
+\item estado\_ventana : t\_estado\_ventana \newline
+El estado de la aplicación si se ejecuta en una ventana. Puede ser \emph{primer\_plano} si no hay ninguna aplicación por encima de ésta en el interfaz de ventanas, \emph{segundo\_plano} si hay alguna aplicación por encima o \emph{minimizada} si ha sido reducida a un icono en la barra de tareas.
+\end{itemize}
+\subsubsection{Métodos}
+\begin{itemize}
+\item dimensiones : (int * int) \newline
+Devuelve el tamaño en píxeles de la pantalla.
+\item \#set\_dimensiones (x:int) (y:int)
+\item \#set\_estado (m:t\_modo\_pantalla)
+\item \#set\_estado\_ventana (e:t\_estado\_ventana) \newline
+Setters.
+\item +estado : t\_modo\_pantalla
+\item +estado\_ventana : t\_estado\_ventana \newline
+Getters.
+\item +cambiar\_modo (x:int) (y:int) (m:t\_modo\_pantalla)\newline
+Cambia el modo gráfico de la pantalla, poniendo un modo con las dimensiones (x,y) y el tipo de ventana especificado.
+\end{itemize}
+

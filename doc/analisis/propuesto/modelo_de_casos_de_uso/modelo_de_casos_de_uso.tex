@@ -1,0 +1,56 @@
+\chapter{Modelo de casos de uso}
+En este capítulo se describirán los casos de uso principales.
+
+\section{Descripciones generales de actores}
+\begin{itemize}
+\item \textbf{Desarrollador} : El desarrollador utiliza el sistema para desarrollar su videojuego.
+\item \textbf{Usuario} : El usuario en un caso de uso suele ser el propio software añadido por el desarrollador para utilizar el framework. A menudo también será cualquier otra parte del sistema que dependa de la que se está describiendo actualmente. En esos casos en la descripción del caso de uso se indicará quién es un buen candidato a usar el sistema.
+\item \textbf{Main Loop} : A menudo, el bucle principal de la aplicación iniciará un caso de uso.
+\item \textbf{Proceso} : Muchas veces, parte de la lógica del juego, expresada como procesos, iniciará un caso de uso.
+\end{itemize}
+\section{Diagrama de modelo de casos de uso}
+
+\section{General: bucle principal}
+El modelo de ejecución general del programa. Está basado en el modelo de ejecución de un programa interactivo, adaptado para este sistema.
+\subsection{Flujo básico}
+\begin{enumerate}
+\item El sistema se inicializa.
+\item Mientras deba continuar la ejecución del sistema:
+	\begin{enumerate}
+	\item El jugador genera eventos de entrada si desea.
+	\item Si hay eventos de entrada:
+		\begin{enumerate}
+		\item El sistema procesa los eventos de entrada.
+		\end{enumerate}
+	\item El sistema procesa la información del juego.
+	\item El sistema muestra el resultado del procesamiento.
+	\item El jugador ve el resultado de sus acciones.
+	\end{enumerate}
+\item El sistema libera recursos y finaliza su ejecución.
+\end{enumerate}
+\subsection{Requisitos especiales}
+\subsection{Precondiciones}
+\subsection{Postcondiciones}
+\subsection{Puntos de extensión}
+\subsection{Relaciones}
+\subsection{Otros diagramas}
+
+
+\section{Objetos: emparentar objeto}
+Cambia de padre a un objeto. Sirve para desplazar ese objeto por el árbol de objetos.
+\subsection{Flujo básico}
+\begin{enumerate}
+\item El usuario ordena al objeto cambiar de padre, y especifica un nuevo padre.
+\item Si el objeto tenía otro padre anteriormente:
+	\begin{enumerate}
+	\item El objeto se libera de la dependencia con su padre anterior.
+	\end{enumerate}
+\item El objeto establece una dependencia con su nuevo padre.
+\end{enumerate}
+
+\subsection{Requisitos especiales}
+\subsection{Precondiciones}
+\subsection{Postcondiciones}
+\subsection{Puntos de extensión}
+\subsection{Relaciones}
+\subsection{Otros diagramas}

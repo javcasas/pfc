@@ -1,0 +1,267 @@
+\chapter{Script de exportación de Blender 2.42}
+Este apéndice describe el script que se encarga de transformar las mallas de Blender en ficheros con el formato descrito en el capítulo anterior.
+
+\section{Modelo de análisis}
+
+\subsection{Requisitos funcionales}
+\begin{itemize}
+\Requisito{EB-R1}{El script se encargará de transformar una malla de Blender en una malla importable por el sistema.}{Imprescindible}{}
+\end{itemize}
+
+\subsection{Requisitos no funcionales}
+\begin{itemize}
+\Requisito{EB-R2}{El script se integrará con Blender.}{Imprescindible}{}
+\end{itemize}
+
+\subsection{Escenario: exportar malla}
+Este es el único escenario que tiene el script. Esencialmente consiste en:
+\begin{itemize}
+\item El usuario crea y prepara una malla en Blender.
+\item El usuario ordena al script exportar la malla a un fichero.
+\item El script guarda la malla en el fichero en el formato de mallas del sistema.
+\end{itemize}
+
+\subsection{Modelo de casos de uso}
+\subsubsection{Descripciones generales de Actores}
+\begin{itemize}
+\item \textbf{Usuario} : Se encarga de editar las mallas de polígonos en Blender y ordenar al script que exporte dichas mallas a ficheros.
+\end{itemize}
+
+\subsubsection{Diagrama de casos de uso}
+\begin{figure}[]
+\centering
+\includegraphics[width=14cm]{addendum/exportador_blender/casos_uso.eps}
+\caption{Diagrama de casos de uso}
+\end{figure}
+
+
+\subsubsection{Caso de uso: Exportar malla}
+\paragraph{Descripción}
+Este caso de uso describe cómo debe actuar el script para exportar una malla de polígonos a un fichero.
+
+\paragraph{Flujo de eventos}
+\begin{enumerate}
+\item El usuario ordena exportar la malla.
+\item El script pregunta por el nombre del fichero al que se exportará la malla.
+\item El usuario introduce el nombre del fichero en el sistema.
+\item El script lee la malla, la procesa y la guarda en el fichero especificado.
+\end{enumerate}
+
+\paragraph{Precondiciones}
+\begin{itemize}
+\item El usuario ha preparado y tiene seleccionada una malla de polígonos.
+\end{itemize}
+
+\paragraph{Postcondiciones}
+\begin{itemize}
+\item Si no hubo ningún problema al leer la malla ni con el fichero destino, la malla habrá sido exportada al fichero con el formato especificado para el sistema.
+\end{itemize}
+
+\subsection{Modelo objeto}
+
+\begin{figure}[]
+\centering
+\includegraphics[width=14cm]{addendum/exportador_blender/analisis.eps}
+\caption{Diagrama de clases de análisis}
+\end{figure}
+
+\subsubsection{Exportador}
+\begin{itemize}
+\item \textbf{Descripción:}
+	\begin{itemize}
+	\item Convierte la malla de Blender en un fichero de formato correcto.
+	\end{itemize}
+\item \textbf{Responsabilidades:}
+	\begin{itemize}
+	\item Debe leer una malla de polígonos.
+	\item Debe exportar dicha malla correctamente el formato especificado.
+	\item No debe influir sobre el entorno de Blender, salvo para informar de un error.
+	\end{itemize}
+\item \textbf{Relaciones:}
+	\begin{itemize}
+	\item \textbf{Blender}: Lee la malla y utiliza el api del programa Blender.
+	\end{itemize}
+\item \textbf{Métodos:}
+	\begin{itemize}
+	\item exportar(void) \newline
+	Lee la malla, pregunta al usuario por el fichero y guarda la malla exportada en el fichero.
+	\end{itemize}
+\end{itemize}
+
+\subsection{Modelos dinámicos}
+
+\begin{figure}[]
+\centering
+\includegraphics[width=14cm]{addendum/exportador_blender/seq_analisis.eps}
+\caption{Diagrama de secuencia del caso de uso \emph{Exportar malla}}
+\end{figure}
+
+\section{Modelo de diseño}
+
+\subsection{Vista arquitectónica}
+El script se apoya en Blender, y es relativamente sencillo, por lo que no se considera oportuno el uso de una arquitectura compleja. Por ello se ha optado por construir el script con un modelo basado en un único subsistema.
+
+\begin{figure}[]
+\centering
+\includegraphics[width=14cm]{addendum/exportador_blender/modelo_arquitectonico.eps}
+\caption{Diagrama del modelo arquitectónico}
+\end{figure}
+
+\subsection{Realización del caso de uso \emph{Exportar malla}}
+\begin{figure}[]
+\centering
+\includegraphics[width=14cm]{addendum/exportador_blender/seq_diseno.eps}
+\caption{Diagrama de secuencia de la realización del caso de uso Exportar Malla}
+\end{figure}
+
+Los pasos que ocurren son básicamente los siguientes:
+\begin{enumerate}
+\item El usuario ordena a Blender que ejecute el script.
+\item Blender llama a Main.
+\item Main pide a Blender una lista con los objetos seleccionados.
+\item Si hay más de 1 objeto seleccionado, o no hay ninguno:
+	\begin{enumerate}
+	\item Main emite un mensaje de error y para la ejecución del script.
+	\end{enumerate}
+\item Main establece en Exportar el objeto que será exportado.
+\item Main pide a Blender que despliegue una ventana de selección de ficheros.
+\item Blender muestra la ventana al usuario.
+\item El usuario selecciona un fichero.
+\item Blender llama a Exportar y le pasa el nombre del fichero seleccionado.
+\item Exportar llama a Exportador, y le pasa el objeto que quiere exportar.
+\item Exportador devuelve el resultado.
+\item Si Exportador no indicó ningún error:
+	\begin{enumerate}
+	\item Exportar llama al API de Python para guardar en el fichero seleccionado la malla exportada.
+	\end{enumerate}
+\end{enumerate}
+
+
+\subsection{Vista lógica}
+En esta sección se describirán las clases y su función.
+
+\begin{figure}[]
+\centering
+\includegraphics[width=14cm]{addendum/exportador_blender/diseno.eps}
+\caption{Diagrama de clases de diseño}
+\end{figure}
+
+
+\subsubsection{Exportador}
+\begin{itemize}
+\item \textbf{Descripción:}
+	\begin{itemize}
+	\item Convierte la malla de Blender en una cadena de texto que se pueda almacenar en un fichero.
+	\end{itemize}
+\item \textbf{Responsabilidades:}
+	\begin{itemize}
+	\item Debe utilizar el API de Blender para convertir la malla que se le pase de parámetro en una cadena con el formato correcto.
+	\item No debe influir sobre el entorno de Blender, salvo para informar de un error.
+	\end{itemize}
+\item \textbf{Relaciones:}
+	\begin{itemize}
+	\item \textbf{Blender}: Utiliza el API de Blender para leer la información de la malla.
+	\end{itemize}
+\item \textbf{Métodos:}
+	\begin{itemize}
+	\item +exportar(o:objeto) : string \newline
+	Extrae la malla del objeto y la convierte en una cadena de texto con el formato correcto.
+	\end{itemize}
+\end{itemize}
+
+\subsubsection{Exportar}
+\begin{itemize}
+\item \textbf{Descripción:}
+	\begin{itemize}
+	\item Es un envoltorio para Exportador. Se encarga de volcar el resultado a un fichero y encargarse de los errores.
+	\end{itemize}
+\item \textbf{Responsabilidades:}
+	\begin{itemize}
+	\item Debe pasar el objeto a Exportador.
+	\item Debe leer la información de si hubo algún error, y preparar una salida en pantalla adecuada.
+	\item Debe volcar el resultado de Exportador al fichero especificado.
+	\end{itemize}
+\item \textbf{Relaciones:}
+	\begin{itemize}
+	\item \textbf{Exportador}: Actúa como envoltorio de Exportador.
+	\item \textbf{Python}: Utiliza los mecanismos de Python para el manejo de ficheros.
+	\end{itemize}
+\item \textbf{Atributos:}
+	\begin{itemize}
+	\item +obj : objeto \newline
+	El objeto del que se extraerá la malla.
+	\end{itemize}
+\item \textbf{Métodos:}
+	\begin{itemize}
+	\item +exportar(fichero:string) \newline
+	Extrae la malla del atributo \emph{obj}, la exporta y la guarda en el fichero especificado. Informa en la consola de error si hubo algún problema.
+	\end{itemize}
+\end{itemize}
+
+\subsubsection{Main}
+\begin{itemize}
+\item \textbf{Descripción:}
+	\begin{itemize}
+	\item Contiene el punto de entrada del script.
+	\end{itemize}
+\item \textbf{Responsabilidades:}
+	\begin{itemize}
+	\item Debe obtener de Blender el objeto seleccionado.
+	\item Debe pasarle dicho objeto a Exportar.
+	\item Debe pedir al usuario el nombre del fichero.
+	\end{itemize}
+\item \textbf{Relaciones:}
+	\begin{itemize}
+	\item \textbf{Exportar}: Envía el objeto seleccionado a Exportar.
+	\item \textbf{Blender}: Utiliza los mecanismos de Blender para obtener la malla y preguntar por el fichero al usuario.
+	\end{itemize}
+\item \textbf{Métodos:}
+	\begin{itemize}
+	\item +main() \newline
+	Punto de entrada al script. Obtiene la malla, pregunta por el fichero y llama a Exportar.
+	\end{itemize}
+\end{itemize}
+
+\section{Modelo de implementación}
+En este capítulo se describe el modelo que ha sido implementado en el script. Para ello se han hecho modificaciones menores en el modelo, con el fin de adaptarlo y aprovechar las ventajas que brinda el lenguaje Python.
+
+\subsection{Exportador}
+El exportador ha sido dividido en varios trocitos, en la forma de pequeños métodos privados que se encargan de dividir el proceso en partes sencillas. Esos métodos se describen a continuación:
+\begin{itemize}
+
+\item exporta(objeto) : string \newline
+Exporta es el método principal, y se encarga de exportar la malla de un objeto de Blender a una cadena de texto.\newline
+Usa: convierte\_malla
+
+\item convierte\_malla(malla) : string \newline
+Convierte la malla al formato de exportación.\newline
+Usa: convierte\_vertices, convierte\_materiales, convierte\_caras
+
+\item convierte\_vertices(malla, vertices\_malla) : string \newline
+Extrae y prepara las coordenadas y las normales de los vértices. \newline
+Usa: convierte\_vertice
+
+\item convierte\_vertice(malla, vertice) : string\newline
+Transforma el vértice concreto en la cadena de texto que lo representa. \newline
+
+\item convierte\_materiales(malla) : string \newline
+Lee todos los materiales de la malla y los convierte al formato especificado. Además prepara un índice interno para que lo utilice convierte\_cara.
+
+\item convierte\_caras(malla,caras) : string\newline
+Lee la información de las caras y prepara su conversión en cadena de texto. \newline
+Usa: convierte\_cara
+
+\item convierte\_cara(malla,cara) : string\newline
+Lee la cara concreta, busca su material y prepara la cadena de texto con el resultado.\newline
+Usa: el índice generado en convierte\_materiales
+
+\end{itemize}
+
+\subsection{Exportar}
+Exportar ha sido organizado como una especie de envoltorio de Exportador, pero adaptando su sintaxis para poder ser utilizado con los mecanismos de Blender de seleccionar ficheros. Por ello tiene un atributo \emph{obj}, que se encarga de \emph{recibir} el parámetro que no se puede pasar en la llamada indirecta desde Blender.
+
+El uso de esta clase es sencillo. Primero se establece el atributo \emph{obj}, y a continuación se llama al método \emph{exportar} con el nombre del fichero como parámetro. La clase se encarga de crear el Exportador y utilizarlo para convertir el objeto especificado en el atributo \emph{obj} en un fichero con el formato especificado.
+
+\subsection{Main}
+Main realmente no es una clase, sino que es una función que se usa como punto de entrada. Esta función se encarga de guardar el estado de Blender antes de buscar el objeto seleccionado. Esto se hace con el fin de dejar Blender \emph{como estaba}. Después busca el objeto seleccionado, y comprueba que es sólo uno. A continuación llama a Blender.Window.FileSelector, que proporciona una ventana donde el usuario puede seleccionar un fichero del disco. Y con el fichero seleccionado llama a Exportar. Por último, restaura el estado original de Blender.
+

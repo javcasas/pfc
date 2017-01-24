@@ -1,0 +1,125 @@
+\chapter{Propósito general del sistema}
+El sistema que se va a desarrollar pretende ser una herramienta de ayuda al desarrollo de videojuegos y aplicaciones multimedia. Hoy día los videojuegos han alcanzado una gran complejidad, y desarrollar uno \emph{desde cero} es algo muy caro. Para ello se pretende proveer de la estructura y situaciones base, con el fin de acelerar el desarrollo de juegos, desarrollando por adelantado la parte general que pertenece a todo videojuego, y dejando \emph{huecos} para las partes que seas específicas del videojuego.
+
+Las partes que se ha optado por desarrollar son:
+\begin{itemize}
+\item \textbf{Motor gráfico} : Se encarga de dibujar el videojuego en pantalla o en otros mecanismos de visualización
+\item \textbf{Motor de sonido} : Se encarga de manipular y controlar los efectos de sonido y la música del videojuego
+\item \textbf{Interfaz de entrada} : Se encarga de recoger las acciones del jugador desde los dispositivos de entrada
+\item \textbf{Sistema de procesos} : Se encarga de ofrecer una base para la implementación de la lógica del juego
+\item \textbf{Control general} : Actúa como director de la orquesta, dando paso a cada una de las partes del sistema
+\end{itemize}
+
+\chapter{Alcance del sistema}
+Como ya se ha indicado, en este documento se describe un framework para desarrollar videojuegos. Este sistema inicialmente está poco desarrollado, pero sitúa la estructura y el modelo para el desarrollo de un videojuego. Para ello se proponen una serie de programas de apoyo para el desarrollo de contenidos multimedia, que luego se integran dentro del videojuego a través de exportadores y mecanismos de carga.
+
+Así el sistema se organiza como una especie de biblioteca de código y programas dentro de la cual se integra el código del desarrollador para crear el videojuego.
+
+En un primer modelo tan sólo se desarrollará un modelo arquitectónico generalizado para videojuegos, un motor gráfico, un mecanismo para ejecutar la lógica del juego y un bucle principal.
+
+\chapter{Objetivos}
+\begin{enumerate}
+\item Construcción de un motor gráfico orientado al dibujado de mallas de polígonos en tiempo real.
+	\begin{itemize}
+	\item El motor soportará gráficos 3D en la forma de mallas poligonales.
+	\item El motor estará optimizado en velocidad, ya que se pretende obtener dinamismo antes que realismo.
+	\item El motor estará organizado conceptualmente de una manera lógica y razonable.
+	\item El motor deberá comportarse de una manera similar con independencia de los mecanismos de dibujado disponibles.
+	\end{itemize}
+\item Construcción de un motor de sonido orientado a la reproducción de efectos de sonido y música (no implementado en esta revisión).
+	\begin{itemize}
+	\item El motor soportará la reproducción y control de volumen de una o varias pistas de música.
+	\item El motor soportará la reproducción y control de una gran cantidad de efectos de sonido.
+	\item El motor estará organizado conceptualmente de una manera lógica y razonable.
+	\item El motor deberá comportarse de una manera similar con independencia de los mecanismos de reproducción de sonido disponibles.
+	\end{itemize}
+\item Construcción de un interfaz de entrada capaz de leer las acciones del jugador (no implementado en esta revisión).
+	\begin{itemize}
+	\item El sistema simplificará las complejidades de los dispositivos de entrada con el fin de construir un interfaz sencillo y lógico.
+	\item El sistema unificará el acceso a los dispositivos de entrada a través de un interfaz general.
+	\end{itemize}
+\item Construcción de un sistema de procesos que permita el manejo sencillo de una gran cantidad de entidades en el juego.
+	\begin{itemize}
+	\item El sistema proveerá  un mecanismo para poder crear y utilizar controladores que controlen los objetos del juego.
+	\end{itemize}
+\item Estructuración y preparación del mecanismo de control general.
+	\begin{itemize}
+	\item Este sistema será el bucle principal del juego.
+	\item Este sistema se encargará de ejecutar las distintas partes del juego.
+	\end{itemize}
+\end{enumerate}
+
+\chapter{Definiciones, acrónimos y abreviaturas}
+\section{Terminología del videojuego}
+\begin{itemize}
+\item \textbf{Entidad} : Un objeto cualquiera dentro del mundo del videojuego. A menudo también se utiliza para definir un objeto o división lógica que establece el desarrollador del videojuego para facilitar su trabajo.
+\item \textbf{Jugador} : La persona que utiliza el videojuego.
+\item \textbf{Lógica o reglas del juego} : Es la especificación completa del comportamiento que debe tener el juego ante cada una de las acciones (o no acciones) del jugador.
+\item \textbf{Universo virtual o universo simulado} : Es el mundo que ocurre dentro del videojuego, donde se desenvuelven los personajes específicos, se desvela la trama y el jugador interactúa.
+\item \textbf{Videojuego} : Aplicación informática orientada al entretenimiento que ofrece al jugador la posibilidad de interactuar sobre un juego con sus reglas específicas. Esencialmente, es la implementación de un juego interactivo convencional sobre una plataforma informática.
+\end{itemize}
+
+\section{Terminología gráfica}
+\begin{itemize}
+\item \textbf{Cámara} : Especificación de un punto de vista de una escena. La cámara especifica la posición y ángulo desde la que ve el jugador la escena en la pantalla.
+\item \textbf{Coordenadas} : Especificación de un punto en un espacio vectorial a través de una base de vectores. En informática gráfica esto se suele simplificar a espacios tridimensionales, y la base se simplifica a tres vectores unitarios, cada uno en la dirección de uno de los ejes de coordenadas. Así el punto se especifica fácilmente en coordenadas cartesianas. Estas coordenadas se suelen especificar como (x,y,z).
+\item \textbf{Coordenadas de texturizado o coordenadas UV} : Especifican la posición de los vértices dentro del espacio vectorial que representa una textura, al aplicar esta textura a un polígono. Se especifican como coordenadas cartesianas en un espacio bidimensional: (u,v). Recientemente se empiezan a utilizar texturas tridimensionales. En estos casos, las coordenadas se especifican como (u,v,w).
+\item \textbf{Escena} : Conjunto de objetos geométricos situados adecuadamente en el espacio, que conforman la imagen que ve el jugador.
+\item \textbf{Fuente de luz} : Objeto que radia luz. En la informática gráfica, esto pasa a convertirse realmente en un objeto conceptual que no se ve directamente, pero influencia \emph{iluminando} los objetos de la escena. Conceptualmente hay tres tipos principales de fuente de luz:
+	\begin{itemize}
+	\item \textbf{Punto de luz} : La luz sale de un punto del espacio en todas direcciones, de una manera parecida a como sale la luz de una bombilla.
+	\item \textbf{Spotlight o foco} : La luz sale de un punto del espacio, pero se dirige en unas direcciones preferentemente, de una manera parecida a la luz de una linterna.
+	\item \textbf{Sol} : La luz procede de un punto en el infinito, e ilumina la escena con rayos paralelos uniformemente, de una manera parecida a la luz solar que ilumina la Tierra.
+	\end{itemize}
+\item \textbf{Luz} : Radiación electromagnética con la propiedad de que los seres humanos podemos ver (en general). En la informática gráfica la luz no es realmente una radiación, sino una simulación de sus propiedades y efectos principales.
+\item \textbf{Malla de polígonos o malla poligonal} : Conjuto de polígonos situados de manera adecuada con el fin de representar un objeto físico.
+\item \textbf{Normal} : Vector que especifica la dirección de una superficie.
+\item \textbf{OpenGL} : Biblioteca gráfica orientada al dibujo de polígonos.
+\item \textbf{Pantalla} : Conceptualización del dispositivo físico que el jugador usa para ver la escena. Algunos ejemplos de pantalla son el monitor de un ordenador, una televisión, la pantalla que ilumina un proyector o los cristales de unas gafas de realidad virtual.
+\item \textbf{Polígono} : Parte de un plano que está delimitada por una serie de segmentos rectos llamados lados, que a su vez unen puntos concretos llamados vértices. A menudo al polígono se le añade significado extra en la forma de textura, color, normal. Salvo que se especifique lo contrario, en este documento siempre hablaremos de polígonos convexos.
+\item \textbf{Triángulo} : Polígono con 3 lados y 3 vértices. Es el polígono más sencillo en términos matemáticos e informáticos, lo cual lo convierte en una de las medidas más utilizadas dentro de la geometría. Cualquier polígono puede dividirse en triángulos.
+\item \textbf{Vértice} : Punto perteneciente a un polígono, que interconecta dos de los lados del mismo.  En el mundo de la informática gráfica a menudo se añade significado a un vértice añadiéndole propiedades como un vector normal, un color o unas coordenadas de texturizado.
+\end{itemize}
+
+\section{Terminología referida al sonido}
+\begin{itemize}
+\item \textbf{Efectos de sonido} : Sonidos concretos que enfatizan momentos y eventos concretos en un videojuego. A menudo se utilizan para reproducir ruidos que ocurrirían físicamente.
+\item \textbf{Música} : Conjunto de sonidos, generalmente rítmicos, que suelen acompañar un videojuego. Salvo casos concretos, la música no tiene ninguna influencia sobre el juego, salvo ayudar a \emph{meter} al jugador dentro del universo simulado y en la piel del protagonista.
+\end{itemize}
+
+\section{Terminología referida a la entrada}
+\begin{itemize}
+
+\item \textbf{Ratón} : Dispositivo de entrada a un ordenador que consiste básicamente en un objeto apuntador con uno o varios botones y ruletas de apoyo.
+\item \textbf{Teclado} : Dispositivo de entrada a un ordenador que dispone de una gran cantidad de pulsadores llamados teclas.
+\end{itemize}
+
+\section{Terminología referida a la lógica del juego}
+\begin{itemize}
+\item \textbf{Entidad} : Cada uno de los objetos participantes en una regla del juego
+\item \textbf{Proceso} : Mecanismo para controlar la acción de una entidad de la manera más independiente posible al resto de las entidades del juego.
+\item \textbf{Regla} : Descripción de una reacción concreta que debe tener el videojuego ante una acción concreta del jugador.
+\end{itemize}
+
+\section{Terminología no UML}
+En este documento se ha extendido ligeramente la cantidad de términos disponibles en el estándar UML. Esos términos se especifican a continuación.
+
+\begin{itemize}
+\item \textbf{Tipos de datos}:
+	\begin{itemize}
+	\item \textbf{Colección de \emph{clase}} : Especifica un agregado de instancias de \emph{clase}. Puede contener 0 o más instancias.
+	\item \textbf{Colección ordenada de \emph{clase}} : Especifica un agregado de instancias de \emph{clase}. Al igual que el anterior, puede contener 0 o más instancias. Pero en este caso hay un orden, es decir, el agregado puede transformarse en una lista donde haya un primero, un segundo, un tercero, etc.
+	\item \textbf{Real} : Por este nombre nos referiremos a los números en coma flotante, ya que entre otras cosas es más fácil y rápido de leer.
+	\item \textbf{\emph{Clase} opcional} : Una o ninguna instancia de \emph{clase}. Es una manera de separar los puntos en los que puede aplicarse una o ninguna instancia de los puntos en los que siempre hay una instancia.
+	\item \textbf{Unit} : Este es el tipo de dato nulo. Se especifica a una función que no requiere parámetros, o lo devuelve un método que no devuelve nada.
+	\end{itemize}
+\end{itemize}
+
+\section{Estereotipos UML}
+\begin{itemize}
+\item \textbf{Entity}: Se aplica a una clase cuyo cometido principal consiste en almacenar algún tipo de dato.
+
+\item \textbf{Singleton}: Se aplica a una clase de la cual se pretende que haya una y sólo una instancia en tiempo de ejecución.
+\end{itemize}
+\chapter{Referencias}
+

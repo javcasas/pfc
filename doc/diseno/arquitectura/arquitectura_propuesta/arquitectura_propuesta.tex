@@ -1,0 +1,164 @@
+\chapter{Arquitectura propuesta}
+\section{Visión global}
+El sistema pretende ser un framework para desarrollar aplicaciones interactivas. Por ello se propone lógicamente como patrón arquitectónico base el MVC: Modelo-Vista-Controlador. El MVC se compone de tres subsistemas básicos:
+
+\begin{figure}[]
+\centering
+\includegraphics[width=14cm]{diseno/arquitectura/arquitectura_propuesta/diagramas/mvc.eps}
+\caption{Patrón arquitectónico Modelo-Vista-Controlador}
+\end{figure}
+
+\begin{itemize}
+\item \textbf{Modelo}
+	\begin{itemize}
+	\item Contiene la representación y la lógica de la aplicación.
+	\item Se encarga de almacenar y procesar la información.
+	\end{itemize}
+\item \textbf{Vista}
+	\begin{itemize}
+	\item Contiene los mecanismos para mostrar la información al usuario.
+	\item Se encarga de mostrar la información al usuario de la aplicación.
+	\item Depende de Modelo.
+	\end{itemize}
+\item \textbf{Controlador}
+	\begin{itemize}
+	\item Contiene los mecanismos para recibir las peticiones del usuario.
+	\item Se encarga de atender las peticiones del usuario y entregar dichas peticiones al Modelo o a la Vista.
+	\item Depende de Modelo y Vista.
+	\end{itemize}
+\end{itemize}
+
+El comportamiento típico del patrón MVC suele ser el siguiente:
+\begin{enumerate}
+\item El usuario utiliza el interfaz del programa para hacer una petición al sistema.
+\item El Controlador recibe la petición.
+\item El Controlador envía al Modelo una o varias peticiones de operación.
+\item El Modelo modifica su estado según las peticiones.
+\item El Controlador envía a la Vista una petición de actualización.
+\item La Vista recoge la información necesaria del Modelo.
+\item La Vista muestra la información recogida en el interfaz del programa.
+\item El usuario ve el resultado de la operación en el interfaz del programa.
+\end{enumerate}
+
+\begin{figure}[]
+\centering
+\includegraphics[width=14cm]{diseno/arquitectura/arquitectura_propuesta/diagramas/mvc_secuencia.eps}
+\caption{Modelo dinámico del patrón arquitectónico Modelo-Vista-Controlador}
+\end{figure}
+
+Para un videojuego, se necesita que el interfaz del programa se actualice continuamente. Por ello, en este caso el sistema se actualizará incluso \emph{cuando el jugador no haga nada}, ya que puede que esté esperando a que ocurra algún evento del juego. Por ello, la asignación final de responsabilidades del controlador varía ligeramente. La \emph{no-actuación} del jugador se interpretará como una forma especial de petición.
+
+
+\section{Diseño de la arquitectura}
+\subsection{Descomposición en subsistemas}
+Debido a la amplitud del sistema, éste ha sido descompuesto en un importante número de subsistemas. A continuación se describirán éstos.
+
+\begin{figure}[]
+\centering
+\includegraphics[width=14cm]{diseno/arquitectura/arquitectura_propuesta/diagramas/arq_detallada.eps}
+\caption{Modelo arquitectónico detallado}
+\end{figure}
+
+\subsubsection{Descomposición de Modelo}
+Modelo se ha descompuesto en gran cantidad de subsistemas, siguiendo un modelo de \emph{grandes bloques}.
+\begin{itemize}
+\item \textbf{Motor gráfico}
+	\begin{itemize}
+	\item Contiene los modelos de representación gráfica.
+	\item Se encarga de gestionar todo lo que se muestra en pantalla. Esto incluye desde píxeles sueltos y polígonos hasta pantallas o ventanas de aplicación.
+	\end{itemize}
+\item \textbf{Motor de sonido}
+	\begin{itemize}
+	\item Contiene los modelos de representación de sonido.
+	\item Se encarga de gestionar todo lo que suena por los altavoces o auriculares.
+	\end{itemize}
+\item \textbf{Motor de procesos}
+	\begin{itemize}
+	\item Proporciona una base para la implementación de la lógica del juego.
+	\item Se encarga de gestionar la lógica del juego y de inicializar el juego una vez todos los subsistemas han sido inicializados.
+	\end{itemize}
+\item \textbf{Bind}
+	\begin{itemize}
+	\item Proporciona a la lógica del juego un enlace con las peticiones del jugador.
+	\item Se encarga de entregar las órdenes del jugador a la lógica del juego.
+	\end{itemize}
+\item \textbf{Lógica del juego}
+	\begin{itemize}
+	\item Este subsistema lo debe \emph{rellenar} el desarrollador que utilice el sistema para desarrollar su juego.
+	\item Se encarga de procesar el modelo de comportamiento del juego, a partir de la entrada recibida a través de Bind, basándose en el modelo de Procesos y entregando el resultado al Motor de Sonido y al Motor Gráfico.
+	\item Depende de Motor gráfico, Motor de sonido, Motor de procesos y Bind.
+	\end{itemize}
+\end{itemize}
+
+\subsubsection{Descomposición de Motor gráfico}
+El motor gráfico es un subsistema complejo, con una gran cantidad de operaciones que tratan desde el control de un píxel hasta el control de toda la pantalla. Por ello se ha optado en descomponerlo en subsistemas. En este caso se ha utilizado un patrón Capas. Para la implementación final del mecanismo se ha optado por un patrón estrategia aplicado a subsistemas. A continuación se describirá cada uno de los subsistemas.
+
+\begin{figure}[]
+\centering
+\includegraphics[width=14cm]{diseno/arquitectura/arquitectura_propuesta/diagramas/motor_grafico.eps}
+\caption{Diagrama de subsistemas del Motor gráfico}
+\end{figure}
+
+\begin{itemize}
+\item \textbf{Geometría}
+	\begin{itemize}
+	\item Se encarga de almacenar y procesar los polígonos como unidades individuales.
+	\end{itemize}
+\item \textbf{Objetos}
+	\begin{itemize}
+	\item Proporciona un mecanismo para utilizar de una manera lógica las mallas de polígonos.
+	\item Se encarga de procesar las mallas como si fueran objetos físicos que pudieramos mover con facilidad.
+	\item Se encarga de mantener la estructura general de la escena.
+	\end{itemize}
+\item \textbf{Render abstracto}
+	\begin{itemize}
+	\item Proporciona mecanismos para manipular la pantalla y cómo se pintan las escenas.
+	\item Se encarga de controlar el uso de la pantalla y los mecanismos para pintar las escenas adecuadamente.
+	\end{itemize}
+\item \textbf{Motor OpenGL}
+	\begin{itemize}
+	\item Implementa el motor gráfico a través de la biblioteca gráfica OpenGL.
+	\item Se encarga de convertir la escena abstracta que haya sido construida utilizando los subsistemas de Geometría, Objetos y Render Abstracto en una serie optimizada de llamadas a la biblioteca OpenGL.
+	\end{itemize}
+\end{itemize}
+
+\subsection{Topología del sistema}
+\subsection{Descripción de las interfaces}
+
+\subsection{Gestión de la persistencia}
+Debido al tipo de sistema que se propone, es necesario proveer una estructura básica de preparación y recuperación de la información. Para ello se propone dividir este proceso en dos secciones:
+\subsubsection{Preparación y almacenamiento de la información}
+Por una parte es necesario pre-procesar y almacenar los datos necesarios.
+\begin{itemize}
+\item \textbf{Mallas 3D}
+	\begin{itemize}
+	\item Las mallas de polígonos se crearán y editarán con la herramienta Blender.
+	\item Una vez completadas las mallas de polígonos, se utilizará dentro de Blender un script que generará un archivo fácilmente importable por el sistema.
+	\end{itemize}
+\item \textbf{Texturas}
+	\begin{itemize}
+	\item Las texturas para las mallas se generarán con un programa de retoque fotográfico. Se propone por ejemplo The Gimp.
+	\item Dichas texturas serán exportadas en formatos concretos y con características concretas, para que el sistema pueda importarlas.
+	\end{itemize}
+\item \textbf{Sonidos}
+	\begin{itemize}
+	\item Los sonidos serán preparados con un programa de edición de sonidos. Se propone por ejemplo el programa Audacity.
+	\item Dichos sonidos serán exportados en formatos concretos para que el sistema pueda importarlos.
+	\end{itemize}
+\item \textbf{Música} \newline
+La música es más difícil de generar que los sonidos. Hay algunos tipos de programa preparados con el fin de crear música. Por ello se propone que la música se prepare en dos pasos
+	\begin{itemize}
+	\item Se genera con algún tipo de programa de creación de música, como puede ser un tracker. Para ello se propone como tracker, el ModPlug Tracker.
+	\item La música será editada y exportada a un formato de compresión con pérdida de información, con el fin de evitar generar ficheros demasiado grandes. Para ello se propone el mismo programa que se utilizó en la fase anterior: Audacity.
+	\item El sistema utilizará un mecanismo especial para importar estos ficheros, evitando cargarlos por completo, ya que pueden ser ficheros grandes.
+	\end{itemize}
+\end{itemize}
+
+\subsubsection{Recuperación de la información}
+En este sistema se sientan las bases para crear un videojuego, pero no se especifica dicho videojuego. Por ello se debe crear un sistema muy flexible de carga de información, para que el desarrollador siga manteniendo el control sobre qué se carga y en qué momento. 
+
+Por eso se propone un patrón de fábricas que lean ficheros e instancien las clases con la información, siempre a petición de los subsistemas del desarrollador.
+
+\subsection{Aspectos globales y de seguridad}
+\subsection{Aspectos de rendimiento y tamaño}
+

@@ -1,0 +1,629 @@
+%\subsubsection{Relaciones}
+%\begin{itemize}
+%\end{itemize}
+%\subsubsection{Atributos}
+%\begin{itemize}
+%\end{itemize}
+%\subsubsection{Métodos}
+%\begin{itemize}
+%\item +inicializador \newline
+%\end{itemize}
+%\subsubsection{Parámetros de instanciación}
+%\begin{itemize}
+%\end{itemize}
+
+
+\chapter{Clases generales}
+En este capítulo se describen algunas clases de uso general que se utilizan en el sistema.
+
+\section{Patrón observador}
+Estas clases son las clases generales de uso con el patrón observador.
+\subsection{\emph{observador}}
+Implementa un observador abstracto.
+\subsubsection{Métodos}
+\begin{itemize}
+\item +actualizar \newline
+Ordena la actualización del estado del Observador.
+\end{itemize}
+
+\subsection{\emph{sujeto}}
+\subsubsection{Relaciones}
+\begin{itemize}
+\item Depende de \Clase{Observador}.
+\end{itemize}
+\subsubsection{Atributos}
+\begin{itemize}
+\item observadores : \Clase{Observador} list \newline
+Los observadores que están observando al sujeto en concreto.
+\end{itemize}
+\subsubsection{Métodos}
+\begin{itemize}
+\item +observadores : \Clase{Observador} list \newline
+Los observadores que están observando al sujeto en concreto.
+\item +añadir\_observador (o:\Clase{observador}) \newline
+Pone un nuevo observador en la lista de observadores.
+\item +eliminar\_observador (o:\Clase{observador}) \newline
+Quita un observador de la lista de observadores.
+\item +notificar \newline
+Llama al método \emph{actualizar} para cada observador en la lista de observadores.
+\end{itemize}
+
+\section{Agregadores}
+Clases que actúan como agregadores con características especiales.
+
+\subsection{agregador}
+Un agregador genérico y parametrizado. 't es el tipo del objeto agregado para una instancia concreta de \Clase{agregador}.
+\subsubsection{Atributos}
+\begin{itemize}
+\item contenido : \emph{Conjunto vacío} \newline
+Los objetos, agregados mediante el módulo Conjunto.
+\end{itemize}
+\subsubsection{Métodos}
+\begin{itemize}
+\item +agregar (x:'t) \newline
+Agrega el objeto.
+\item +quitar (x:'t) \newline
+Quita el objeto.
+\item +pertenece (x:'t) : bool \newline
+Comprueba si el objeto ya está agregado al agregador.
+\item +obtener\_todos : 't list \newline
+Devuelve una lista con todos los objetos del agregador.
+\end{itemize}
+
+\subsection{agregador\_observado}
+Es un \Clase{agregador} que además es un \Clase{sujeto} dentro del patrón observador. Notifica a sus \Clase{Observadores} cuando agrega o quita un elemento. El tipo del objeto agregado es 't.
+\subsubsection{Relaciones}
+\begin{itemize}
+\item Es una especificación de 't \Clase{agregador} (un \Clase{Agregador} de objetos de tipo 't).
+\item Es una especificación de sujeto.
+\end{itemize}
+\subsubsection{Atributos}
+\begin{itemize}
+\item ultima\_accion : t\_ultima\_accion option \newline
+Almacena la última operación que hizo el agregador, ya sea agregar o quitar.
+\end{itemize}
+\subsubsection{Métodos}
+\begin{itemize}
+\item +ultima\_accion : t\_ultima\_accion \newline
+Devuelve la última operación del agregador, o falla si no hubo última.
+\item +agregar (x:'t) \newline
+Agrega un objeto, guarda \emph{Agregar} como última acción y notifica a sus observadores.
+\item +quitar (x:'t) \newline
+Desagrega un objeto, guarda \emph{Quitar} como última acción y notifica a sus observadores.
+\end{itemize}
+
+\subsection{asociador}
+Asocia objetos de tipo 'a a objetos de tipo 'b, de tal manera que cada objeto de tipo 'a dentro del asociador tiene un objeto de tipo 'b.
+\subsubsection{Atributos}
+\begin{itemize}
+\item contenido : \emph{Asociador vacío} \newline
+Las parejas de objetos, asociadas mediante el módulo Asociador.
+\end{itemize}
+\subsubsection{Métodos}
+\begin{itemize}
+\item +asociar (a:'a) (b:'b) \newline
+Asocia al objeto a con el objeto b.
+\item +quitar\_asociación (a:'a) \newline
+Elimina dentro del asociador la relación entre el objeto a y su asociado.
+\item +buscar\_asociado (a:'a) : 'b \newline
+Busca el objeto asociado al objeto a. Falla si no hay ninguno.
+\end{itemize}
+
+
+\section{Ficheros}
+Estas clases se refieren a ficheros y mecanismos similares.
+\subsection{\emph{dispositivo\_entrada\_caracteres}}
+Clase abstracta que provee el interfaz para acceder a un dispositivo de lectura del que se pueden leer caracteres. Al leer todos los métodos avanzan el puntero de lectura y lanzan una excepción \emph{End\_of\_file} si se intenta leer más allá de los límites del fichero.
+\subsubsection{Métodos}
+\begin{itemize}
+\item +leer\_caracter : char \newline
+Lee un caracter y avanza el puntero de lectura.
+\item +leer\_linea : string \newline
+Lee hasta encontrar un retorno de carro.
+\item +leer\_cadena (n:int) : (int * string) \newline
+Intenta leer n caracteres. Devuelve la cadena leída y el número de caracteres leídos. Si llega al final del fichero antes de leer n caracteres devuelve la cantidad leída sin lanzar ninguna excepción.
+\item +leer\_cadena\_completa (n:int) : string \newline
+Lee n caracteres. Si no hay caracteres suficientes lanza la excepción \emph{End\_of\_file}.
+\item +longitud : int \newline
+La longitud completa del fichero.
+\item +posición\_lectura : int \newline
+La posición del puntero de lectura.
+\item +set\_posicion\_lectura (n:int) \newline
+Cambia la posición del puntero de lectura.
+\end{itemize}
+
+\subsection{fichero\_entrada}
+Implementa la lectura de un fichero de disco.
+
+\subsubsection{Relaciones}
+\begin{itemize}
+\item Es una especificación de \Clase{Dispositivo entrada caracteres}
+\end{itemize}
+\subsubsection{Atributos}
+\begin{itemize}
+\item archivo : in\_channel \newline
+El manejador del archivo.
+\end{itemize}
+\subsubsection{Parámetros de instanciación}
+\begin{itemize}
+\item fn : string \newline
+La ruta del fichero en disco.
+\end{itemize}
+
+\section{Matemáticas}
+\subsection{vector}
+\subsubsection{Relaciones}
+\begin{itemize}
+\item Depende de \Clase{Matriz}.
+\end{itemize}
+\subsubsection{Atributos}
+\begin{itemize}
+\item vector : float array \newline
+Un array con el contenido del vector.
+\end{itemize}
+\subsubsection{Métodos}
+\begin{itemize}
+\item +to\_list : float list \newline
+El contenido del vector como lista.
+\item +to\_array : float array \newline
+El contenido del vector como array.
+\item +num\_elementos : int \newline
+El número de elementos o dimensión del vector.
+\item +dimensión : int \newline
+Lo mismo que num\_elementos.
+\item +elemento (i:int) : float \newline
+El elemento i-ésimo del vector, empezando por 1.
+\item +suma (v2:vector) : vector \newline
+Suma dos vectores elemento a elemento. Tienen que tener la misma cantidad de elementos.
+\item +producto\_escalar (e:float) : vector \newline
+Devuelve un vector de tal manera que es el resultado de multiplicar cada elemento del vector actual por e.
+\item +producto\_interior (b:vector) : float \newline
+Siendo los vectores a y b devuelve
+\begin{math}
+\sum_{} a_{i} b_{i}
+\end{math}
+\item +longitud : float \newline
+Siendo a el vector devuelve
+\begin{math}
+\sqrt{\sum_{} a_{i}^2}
+\end{math}
+\item +a\_unitario : vector \newline
+Escala el vector hasta que su longitud es 1.
+\item +a\_fila : matriz \newline
+Convierte el vector en una matriz fila.
+\item +a\_columna : matriz \newline
+Convierte el vector en una matriz columna.
+\item +fila\_por\_matriz (m:matriz) : vector \newline
+Multiplica el vector como fila por la matriz.
+\item +producto\_cruzado (b:vector) : vector \newline
+Realiza el producto cruzado, también llamado producto vectorial o producto externo, de dos vectores ambos de 2 o 3 dimensiones.
+\item +a\_string : string \newline
+Devuelve una cadena de texto con el contenido del vector en un formato fácilmente legible por personas.
+\end{itemize}
+\subsubsection{Parámetros de instanciación}
+\begin{itemize}
+\item v : float array \newline
+Un array con los elementos que contendrá el vector.
+\end{itemize}
+
+\subsection{vector2}
+Un alias para \Clase{vector}, pero garantiza que será un vector de dimensión 2.
+
+\subsection{vector3}
+Un alias para \Clase{vector}, pero garantiza que será un vector de dimensión 3.
+
+\subsection{vector4}
+Un alias para \Clase{vector}, pero garantiza que será un vector de dimensión 4.
+
+
+\subsection{matriz}
+\subsubsection{Relaciones}
+\begin{itemize}
+\item Depende de \Clase{vector}.
+\end{itemize}
+\subsubsection{Atributos}
+\begin{itemize}
+\item mat : float array array \newline
+Contiene la matriz como un array de arrays.
+\end{itemize}
+\subsubsection{Métodos}
+\begin{itemize}
+\item +num\_filas : int \newline
+El número de filas de la matriz.
+\item +num\_columnas : int \newline
+El número de columas de la matriz.
+\item +extrae\_fila (i:int) : vector \newline
+Extrae la fila i-ésima de la matriz, empezando por 1.
+\item +extrae\_columna (j:int) : vector \newline
+Extrae la columna j-ésima de la matriz, empezando por 1.
+\item +extrae\_elemento (i:int) (j:int) : float \newline
+Siendo M la matriz extrae el elemento 
+\begin{math}
+M_{ij}
+\end{math}.
+\item +extrae\_submatriz (i1:int, i2:int) (j1:int, j2:int) : matriz \newline
+Extrae la submatriz compuesta por las filas desde i1 hasta i2 (ambos incluídos) y columnas desde j1 hasta j2 (ambos incluídos), empezando la cuenta de filas y columnas por 1.
+\item +matriz\_por\_matriz (m2:matriz) : matriz \newline
+Devuelve el producto de las dos matrices.
+\item +matriz\_por\_columna (v:vector) : vector \newline
+Multiplica la matriz por el vector como columna y devuelve el resultado.
+\item +traspuesta : matriz \newline
+Transpone la matriz.
+\item +cambia\_elemento (i:int) (j:int) (nv:float) \newline
+Cambia el elemento $M_{ij}$ por nv.
+\item +duplica : matriz \newline
+Devuelve una copia de la matriz.
+\item +a\_string : string \newline
+Devuelve la matriz como una cadena de texto legible por una persona.
+\end{itemize}
+\subsubsection{Parámetros de instanciación}
+\begin{itemize}
+\item m : float array array \newline
+Un array de arrays los elementos que contendrá la matriz.
+\end{itemize}
+
+\subsection{cuaternion}
+\subsubsection{Relaciones}
+\begin{itemize}
+\item Depende de \Clase{vector}.
+\item Depende de \Clase{Matriz}.
+\end{itemize}
+\subsubsection{Atributos}
+\begin{itemize}
+\item a1 : float \newline
+La parte real del cuaternión.
+\item a2 : float
+\item a3 : float
+\item a4 : float \newline
+(a2, a3, a4) conforman la parte imaginaria del cuaternión.
+\end{itemize}
+\subsubsection{Métodos}
+\begin{itemize}
+\item +valor : (float * float * float * float) \newline
+El contenido del cuaternión como (a1, a2, a3, a4).
+\item +suma (c2:cuaternion) : cuaternion \newline
+Suma dos cuaterniones, elemento a elemento.
+\item +conjugado : cuaternion \newline
+El conjugado del cuaternión, es decir, otro cuaternión en el que la parte imaginaria ha sido cambiada de signo.
+\item +producto (c2:cuaternion) : cuaternion \newline
+Siendo c1 y c2 los cuaterniones, devuelve c1 · c2. El producto de dos cuaterniones es asociativo, pero no conmutativo.
+\item +longitud : float \newline
+Devuelve $\sqrt{\sum a_{i}}$.
+\item +a\_unitario : cuaternion \newline
+Escala el cuaternión hasta que su longitud sea 1.
+\item +extrae\_rotacion : (vector * float) \newline
+Para un cuaternión que expresa una rotación, devuelve dicha rotación como un vector alrededor del que se rota y el ángulo que se rota, en radianes.
+\item +extrae\_vector : vector \newline
+Para un cuaternión que expresa un vector, devuelve el vector.
+\item +a\_matriz\_rotacion : matriz \newline
+Convierte un cuaternión que expresa una rotación en una matriz de rotación.
+\item +to\_string : string \newline
+Devuelve una cadena de texto con el cuaternión en forma legible.
+\end{itemize}
+\subsubsection{Parámetros de instanciación}
+\begin{itemize}
+\item a1 : float\newline
+El término real del cuaternión.
+\item v : (float * float * float) \newline
+El término imaginario del cuaternión.
+\end{itemize}
+
+\section{Procesos}
+\subsection{\emph{sistema}}
+\subsubsection{Relaciones}
+\begin{itemize}
+\item Depende de \Clase{proceso}.
+\end{itemize}
+\subsubsection{Métodos}
+\begin{itemize}
+\item +ejecutar\_procesos \newline
+Da una ráfaga de CPU a todos los procesos normales.
+\item +ejecutar\_dormidos \newline
+Da una ráfaga de CPU a los procesos dormidos.
+\item +añadir\_proceso (p:proceso) \newline
+Añade un proceso al sistema de procesos.
+\end{itemize}
+
+\subsection{\emph{prioridad}}
+\subsubsection{Relaciones}
+\begin{itemize}
+\item Depende de \Clase{Proceso}.
+\end{itemize}
+\subsubsection{Métodos}
+\begin{itemize}
+\item +valor : int \newline
+El número de prioridad.
+\item +ejecutar\_procesos \newline
+Da una ráfaga de CPU a los procesos normales que tenga asignada esta prioridad.
+\item +ejecutar\_dormidos \newline
+Da una ráfaga de CPU a los procesos dormidos que tenga asignada esta prioridad.
+\item +añadir\_proceso (p:proceso) \newline
+Añade un proceso al sistema de procesos.
+\item +eliminar\_proceso (p:proceso) \newline
+Elimina un proceso del sistema de procesos.
+\item \#pre\_proceso \newline
+Es llamado antes de que cualquier prioridad empiece a ejecutar procesos.
+\item \#post\_proceso \newline
+Es llamado después de que las prioridades hayan ejecutado todos los procesos.
+\end{itemize}
+
+\subsection{\emph{proceso}}
+\subsubsection{Relaciones}
+\begin{itemize}
+\item Depende de \Clase{prioridad}.
+\end{itemize}
+\subsubsection{Métodos}
+\begin{itemize}
+\item +estado : t\_estado \newline
+Devuelve el estado del proceso como \emph{Normal}, \emph{Dormido}, \emph{Congelado}, \emph{Muerto}.
+\item +prioridad : int \newline
+El valor de prioridad del proceso.
+\item +set\_prioridad (i:int) \newline
+Cambia la prioridad del proceso.
+\item +ejecutar \newline
+Método al que se llama para dar una ráfaga de CPU al proceso.
+\item +ejecutar\_dormido \newline
+Método al que se llama para dar una ráfaga de CPU al proceso si está dormido.
+\item +señal (s:t\_señal) \newline
+Envía una señal al proceso, ya sea \emph{Despertar}, \emph{Dormir}, \emph{Congelar} o \emph{Matar}.
+\item +evento\_despertar
+\item +evento\_dormir
+\item +evento\_congelar
+\item +evento\_matar
+Estos métodos son llamados cuando el proceso recibe una señal.
+\item +lanzar (p:proceso) \newline
+Mete un nuevo proceso en el sistema de procesos.
+\end{itemize}
+
+\subsection{prioridad\_impl}
+\subsubsection{Relaciones}
+\begin{itemize}
+\item Es una especificación de \Clase{prioridad}.
+\item Depende de \Clase{proceso}.
+\item Depende de \Clase{sistema}.
+\end{itemize}
+\subsubsection{Atributos}
+\begin{itemize}
+\item normales : proceso list
+\item dormidos : proceso list
+\item congelados : proceso list
+Almacena los procesos según el tipo en esta prioridad.
+\item normales\_modificados : proceso list
+\item dormidos\_modificados : proceso list
+\item congelados\_modificados : proceso list
+Almacena los procesos según el tipo mientras cambian durante la ráfaga de CPU actual.
+\item prioridad : int \newline
+Almacena el valor de prioridad.
+\end{itemize}
+
+\subsection{sistema\_impl}
+\subsubsection{Relaciones}
+\begin{itemize}
+\item Es una especificación de \Clase{sistema}.
+\item Depende de \Clase{prioridad}.
+\item Instancia \Clase{prioridad impl}.
+\item Depende de \Clase{proceso}.
+\end{itemize}
+\subsubsection{Atributos}
+\begin{itemize}
+\item prioridades : prioridad list\newline
+Guarda las prioridades del sistema ordenadas por valor.
+\end{itemize}
+\subsubsection{Métodos}
+\begin{itemize}
+\item -pre\_proceso \newline
+Lanza el método pre\_proceso para cada prioridad.
+\item -post\_proceso \newline
+Lanza el método post\_proceso para cada prioridad.
+\end{itemize}
+
+\subsection{\emph{proceso\_abstract}}
+\subsubsection{Relaciones}
+\begin{itemize}
+\item Es una especificación de \Clase{proceso}.
+\item Depende de \Clase{prioridad}.
+\end{itemize}
+%\subsubsection{Atributos}
+%\begin{itemize}
+%\end{itemize}
+%\subsubsection{Métodos}
+%\begin{itemize}
+%\end{itemize}
+
+\section{Recursos}
+Las siguientes clases organizan la instanciación y destrucción de objetos cuyo coste de instanciación sea muy alto (por ejemplo, objetos grandes cargados de disco).
+\subsection{\emph{cargador}}
+Organiza la carga o descarga de un recurso. El tipo de recurso cargado es 't.
+%\subsubsection{Relaciones}
+%\begin{itemize}
+%\end{itemize}
+\subsubsection{Atributos}
+\begin{itemize}
+\item estado : t\_estado \newline
+El estado de carga del recurso. Los estados disponibles son \emph{No\_cargado}, \emph{Carga\_incompleta(porcentaje)}, \emph{Cargado}, \emph{Descarga\_incompleta}, \emph{Error\_carga(descripción)}, \emph{Error\_descarga(descripción)}.
+\end{itemize}
+\subsubsection{Métodos}
+\begin{itemize}
+\item +estado : t\_estado \newline
+El estado de carga del recurso.
+\item \#cambia\_estado (n:t\_estado) \newline
+Cambia el estado de carga.
+\item +\emph{cargar} \newline
+Comienza la carga del recurso.
+\item +\emph{descargar} \newline
+Comienza la descarga del recurso.
+\item +\emph{obtener} : 't \newline
+Devuelve el recurso cargado.
+\item +\emph{clonar} : 't \newline
+Para un recurso ya cargado, devuelve una copia del recurso.
+\end{itemize}
+
+\subsection{\emph{a\_instanciador}}
+Instancia objetos de tipo 't.
+%\subsubsection{Relaciones}
+%\begin{itemize}
+%\end{itemize}
+%\subsubsection{Atributos}
+%\begin{itemize}
+%\end{itemize}
+\subsubsection{Métodos}
+\begin{itemize}
+\item +\emph{cargar} \newline
+Carga el recurso asociado al objeto.
+\item +\emph{descargar} \newline
+Descarga el recurso asociado al objeto.
+\item +\emph{obtener} : 't \newline
+Instancia el objeto.
+\item +\emph{obtener\_duplicado} : 't \newline
+Hace una copia del objeto.
+\item +\emph{estado} : t\_estado \newline
+El estado de carga del recurso.
+\end{itemize}
+
+\subsection{\emph{instanciador}}
+Instancia objetos de tipo 'obj a partir datos de instanciación (tipo 'datos).
+\subsubsection{Relaciones}
+\begin{itemize}
+\item Es una especificación de \Clase{'obj A\_instanciador}.
+\item Depende de \Clase{'datos Cargador}.
+\end{itemize}
+\subsubsection{Atributos}
+\begin{itemize}
+\item mi\_cargador : 'datos cargador \newline
+El cargador que utiliza este instanciador para obtener los datos necesarios para instanciar el objeto.
+\end{itemize}
+\subsubsection{Métodos}
+\begin{itemize}
+\item \#\emph{instanciar} (d:'datos) : 'obj \newline
+Instancia un objeto a partir de los datos indicados.
+\end{itemize}
+
+\subsection{\emph{instanciador\_hilos}}
+Similar a la clase \Clase{Instanciador}, instancia objetos de tipo 'obj a partir datos de instanciación (tipo 'datos), pero usa hilos para la carga, con el fin de que ésta ocurra en segundo plano.
+\subsubsection{Relaciones}
+\begin{itemize}
+\item Es una especificación de \Clase{'obj A\_instanciador}.
+\item Depende de \Clase{'datos Cargador}.
+\end{itemize}
+\subsubsection{Atributos}
+\begin{itemize}
+\item mi\_cargador : 'datos cargador \newline
+El cargador que utiliza este instanciador para obtener los datos necesarios para instanciar el objeto.
+\item hilo : Thread.t option \newline
+Almacena el identificador de hilo para la carga diferida.
+\end{itemize}
+\subsubsection{Métodos}
+\begin{itemize}
+\item +cargar \newline
+Comienza la carga del recurso en un hilo separado.
+\item +descargar \newline
+Comienza la descarga del recurso en un hilo separado.
+\item \#\emph{instanciar} (d:'datos) : 'obj \newline
+Instancia un objeto a partir de los datos indicados.
+\end{itemize}
+
+\subsection{gestor\_recursos}
+Asocia y organiza la carga de recursos del tipo 'obj. Cada recurso es identificado por una cadena de texto.
+\subsubsection{Relaciones}
+\begin{itemize}
+\item Depende de \Clase{a\_instanciador}.
+\end{itemize}
+\subsubsection{Atributos}
+\begin{itemize}
+\item contenido : GestorRecursos vacío \newline
+Almacena los instanciadores utilizando el módulo GestorRecursos.
+\end{itemize}
+\subsubsection{Métodos}
+\begin{itemize}
+\item +nuevo\_instanciador (id:string) (ob: 'obj a\_instanciador) \newline
+Añade un instanciador nuevo asociado a la cadena id.
+\item \#get\_item (id:string) : 'obj a\_instanciador \newline
+Devuelve el instanciador asociado a la cadena id.
+\item +cargar (id:string) \newline
+Carga el recurso asociado a la cadena id.
+\item +descargar (id:string) \newline
+Descarga el recurso asociado a la cadena id.
+\item +obtener (id:string) : 'obj \newline
+Instancia el recurso asociado a la cadena id.
+\item +estado (id:string) : t\_estado \newline
+Obtiene el estado del cargador asociado al recurso id.
+\item +cargado (id:string) : bool \newline
+Devuelve \emph{true} si el recurso de nombre id está cargado.
+\item +obtener\_duplicado (id:string) : 'obj \newline
+Clona el recurso asociado a la cadena id.
+\item +forzar\_obtener (id:string) : 'obj \newline
+Instancia el recurso asociado a la cadena id, ordenando su carga si no está cargado y esperando hasta que lo esté.
+\end{itemize}
+
+\section{Registro}
+Este fichero ha sido organizado como un módulo procedural simple. Implementa un sistema simple para guardar mensajes o notificaciones con fines depurativos. Los mensajes se escriben en pantalla al terminar la ejecución del programa.
+\begin{itemize}
+\item Registro.mensaje (m:string) \newline
+Almacena un mensaje en el registro.
+\item Registro.advertencia (a:string) \newline
+Almacena en el registro un mensaje importante.
+\item Registro.error (e:string) \newline
+Almacena en el registro una notificación de error.
+\end{itemize}
+
+\section{Vista}
+Proporciona algunas clases de ayuda para implementar parte del patrón Modelo-Vista-Controlador.
+
+\subsection{\emph{motor}}
+%\subsubsection{Relaciones}
+%\begin{itemize}
+%\end{itemize}
+%\subsubsection{Atributos}
+%\begin{itemize}
+%\end{itemize}
+\subsubsection{Métodos}
+\begin{itemize}
+\item +\emph{inicializar} \newline
+Inicializa el motor.
+\item +\emph{ejecutar} \newline
+Permite al motor hacer su parte de la representación para el presente fotograma.
+\item +\emph{terminar} \newline
+Libera los recursos asociados al motor.
+\end{itemize}
+
+\subsection{proxy\_motor}
+Implementa un patrón proxy para un motor.
+\subsubsection{Relaciones}
+\begin{itemize}
+\item Es una especificación de \Clase{motor}.
+\end{itemize}
+\subsubsection{Atributos}
+\begin{itemize}
+\item motor\_final : motor option \newline
+El motor que está situado detrás del proxy.
+\end{itemize}
+\subsubsection{Métodos}
+\begin{itemize}
+\item +set\_motor\_final (m: motor option)
+\item +get\_motor\_final : motor \newline
+Getter y setter para motor\_final.
+\item inicializar
+\item ejecutar 
+\item terminar \newline
+Llama al método correspondiente en motor\_final.
+\end{itemize}
+
+\subsection{gestor\_motores}
+Anota y gestiona todos los motores de un tipo.
+\subsubsection{Relaciones}
+\begin{itemize}
+\item Depende de \Clase{motor}.
+\end{itemize}
+\subsubsection{Atributos}
+\begin{itemize}
+\item motores\_disponibles : (string * motor) list \newline
+Almacena los motores existentes, junto con un nombre para cada uno.
+\end{itemize}
+\subsubsection{Métodos}
+\begin{itemize}
+\item +obten\_motor (nombre:string) \newline
+Devuelve el motor con el nombre indicado.
+\item +registra\_motor (nombre:string) (m:motor) \newline
+Registra un motor con el nombre indicado.
+\end{itemize}
+

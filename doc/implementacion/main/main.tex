@@ -1,0 +1,91 @@
+%\subsubsection{Relaciones}
+%\begin{itemize}
+%\end{itemize}
+%\subsubsection{Atributos}
+%\begin{itemize}
+%\end{itemize}
+%\subsubsection{Métodos}
+%\begin{itemize}
+%\item +inicializador \newline
+%\end{itemize}
+%\subsubsection{Parámetros de instanciación}
+%\begin{itemize}
+%\end{itemize}
+
+\chapter{Mecanismos de control general}
+\section{Bucle principal}
+\subsection{main\_loop}
+\subsubsection{Relaciones}
+\begin{itemize}
+\item Depende de \Clase{Procesos.sistema\_impl}.
+\item Depende de \Clase{Vista.motor}.
+\end{itemize}
+\subsubsection{Atributos}
+\begin{itemize}
+\item sistema\_procesos : Procesos.sistema \newline
+El sistema de procesos que ejecutará el bucle principal.
+\item seguir\_bucle : boolean \newline
+Guarda para saber cuándo debe terminar la ejecución del bucle principal.
+\end{itemize}
+\subsubsection{Métodos}
+\begin{itemize}
+\item +sistema\_procesos : Procesos.sistema \newline
+Getter.
+\item +fin\_bucle \newline
+Ordena la detención del bucle principal al finalizar la vuelta actual.
+\item +leer\_entrada \newline
+Lee y procesa los eventos de entrada.
+\item +ejecutar\_procesos \newline
+Lanza la ejecución del sistema de procesos.
+\item +ejecutar\_motor\_grafico \newline
+Lanza una actualización del motor gráfico.
+\item +ejecutar\_motor\_sonido \newline
+Lanza una actualización del motor de sonido. Como actualmente no hay ningún motor de sonido implementado, este método no hace nada.
+\item +mostrar\_resultados \newline
+Lanza la ejecución del motor gráfico y de sonido.
+\item +ejecutar \newline
+Bucle principal. Mientras no se llame a fin\_bucle, llama en un bucle infinito a leer\_entrada, ejecutar\_procesos y mostrar\_resultados.
+\end{itemize}
+
+\subsection{main}
+\subsubsection{Relaciones}
+\begin{itemize}
+\item Depende de \Clase{main\_loop}.
+\item Depende de \Clase{Vista.motor}.
+\item Depende de \Clase{Vista.proxy\_motor}.
+\item Depende de \Clase{Procesos.sistema}.
+\item Depende de \Clase{Logica.proceso\_base}.
+\item Depende del subsistema SDL.
+\end{itemize}
+\subsubsection{Métodos}
+\begin{itemize}
+\item +inicializar\_SDL \newline
+Inicializa el subsistema SDL, y establece el título de la ventana.
+\item +detener\_SDL \newline
+Detiene la biblioteca SDL.
+\item +inicializar\_motor\_grafico \newline
+Establece e inicializa el motor gráfico "OpenGL".
+\item +detener\_motor\_grafico \newline
+Termina la ejecución del motor gráfico que esté instalado.
+\item +inicializar\_motor\_sonido \newline
+Establece e inicializa el motor de sonido. Como no hay ningún motor de sonido implementado, no hace nada.
+\item +detener\_motor\_sonido \newline
+Termina la ejecución del motor de sonido. Como no hay ningún motor de sonido implementado, no hace nada.
+\item +lanzar\_proceso\_base \newline
+Instancia la clase \Clase{Lógica.proceso\_base} y lo añade al sistema de procesos.
+\item +ejecutar \newline
+Inicializa SDL, los motores gráficos y de sonido, lanza el proceso base y llama a ejecutar, del bucle principal. Cuando acabe, detiene los motores y la biblioteca SDL. Este método es el punto de entrada del programa.
+\end{itemize}
+
+
+\section{Lógica}
+\subsection{proceso\_base}
+\subsubsection{Relaciones}
+\begin{itemize}
+\item Es una especificación de \Clase{Procesos.proceso\_abstract}.
+\end{itemize}
+\subsubsection{Métodos}
+\begin{itemize}
+\item +ejecutar \newline
+El punto de entrada de la lógica de la aplicación.
+\end{itemize}

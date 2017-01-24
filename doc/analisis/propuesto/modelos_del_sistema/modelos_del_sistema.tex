@@ -1,0 +1,24 @@
+\newcommand{\flecha}[0]{-\textgreater\ }
+
+\chapter{Modelos del sistema}
+\section{Sistema gráfico}
+Se propone dividir el motor gráfico en varios niveles, con el fin de simplificar las relaciones y reducir la dependencia. Por ello se proponen tres niveles:
+\begin{itemize}
+\item \textbf{Nivel de geometría} : Trata con vértices, polígonos y mallas
+\item \textbf{Nivel de objetos} : Trata con los objetos que componen una escena, cámaras y luces
+\item \textbf{Nivel de dibujado} : Trata de cómo manejar las escenas que componen la imagen final que se muestra en pantalla
+\end{itemize}
+
+
+
+\subsection{Nivel de geometría}
+Este nivel organiza el almacenamiento y proceso de las mallas de polígonos y los elementos que las componen. Está organizado como clases de almacenamiento de datos (clases entidad) ya que apenas hay procesamiento en este subsistema, al menos respecto a la parte que será implementada en esta revisión.
+
+\subsection{Nivel de objetos}
+Este nivel organiza el procesamiento de las entidades que componen una escena, tratándolas como entidades indivisibles. Incluye el caso de uso \emph{emparentar}, que se encarga de describir cómo unos objetos pueden depender de otros geométricamente hablando.
+
+\subsection{Nivel de dibujado}
+Este nivel se ha organizado para poder controlar varias pantallas con distintos sistemas e imágenes en cada una.
+
+\section{Motor de procesos}
+Este subsistema se encarga de proporcionar un esqueleto para la lógica del juego. Para ello propone dividir dicha lógica en pequeños elementos que se ejecutan concurrentemente como los procesos en un sistema operativo. Incluye los casos de uso \emph{ejecutar\_procesos}, que se encarga de dar tiempo de CPU a cada proceso; y \emph{cambiar\_prioridad}, que se encarga de decidir el orden en que se ejecutarán los procesos.

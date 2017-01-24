@@ -1,0 +1,1193 @@
+%\subsubsection{Relaciones}
+%\begin{itemize}
+%\end{itemize}
+%\subsubsection{Atributos}
+%\begin{itemize}
+%\end{itemize}
+%\subsubsection{Métodos}
+%\begin{itemize}
+%\item +inicializador \newline
+%\end{itemize}
+%\subsubsection{Parámetros de instanciación}
+%\begin{itemize}
+%\end{itemize}
+
+%\begin{itemize}
+%\item Es una especificación de \Clase{vigilante\_agregador}.
+%\item Depende de \Clase{i\_dibujador\_objeto}.
+%\item Depende de \Clase{$dibujador concreto$}.
+%\item Depende de \Clase{$clase dibujada$}.
+%\item Depende de \Clase{General.agregador\_observado}.
+%\item Depende de \Clase{General.asociador}.
+%\end{itemize}
+%\subsubsection{Métodos}
+%\begin{itemize}
+%\item +nuevo\_dibujador (t:$clase dibujada$) : $dibujador concreto$ \newline
+%Instancia un nuevo dibujador para $clase dibujada$ pasada como parámetro y lo agrega al asociador \emph{asociador\_$clase dibujada abstracta$\_dibujadores}.
+%\item +eliminar\_dibujador (t:$clase dibujada$) \newline
+%Llama al destructor del dibujador asociado a $clase dibujada$, y después lo elimina del asociador.
+%\end{itemize}
+%\subsubsection{Parámetros de instanciación}
+%\begin{itemize}
+%\item ag : $clase dibujada$ General.agregador\_observado \newline
+%El parámetro para \Clase{vigilante\_agregador}.
+%\end{itemize}
+
+
+
+
+\chapter{Motor OpenGL}
+\section{Uso general}
+\subsection{\emph{vigilante\_agregador}}
+Vigila un agregador, y actúa cuando el agregador agrega o elimina un elemento. El agregador agrega objetos del tipo 't.
+\subsubsection{Relaciones}
+\begin{itemize}
+\item Es una especificación de \Clase{observador}, es decir, es un observador en un patrón observador.
+\item Depende de \Clase{General.agregador\_observado}.
+\end{itemize}
+\subsubsection{Atributos}
+\begin{itemize}
+\item sujeto : 't General.agregador\_observado \newline
+El sujeto observado en el patrón observador.
+\end{itemize}
+\subsubsection{Métodos}
+\begin{itemize}
+\item +inicializador \newline
+Se añade a sí mismo a la lista de observadores del agregador observado.
+\item \#\emph{nuevo\_dibujador} (ob:'t) \newline
+Realiza las operaciones necesarias para acomodar dentro del sistema de dibujado al nuevo objeto ob.
+\item \#\emph{eliminar\_dibujador} (ob:'t) \newline
+Realiza las operaciones necesarias para eliminar los mecanismos que se usaban para dibujar el objeto ob.
+\item +actualizar \newline
+Lee la última acción del agregador observado y lanza \emph{nuevo\_dibujador} o \emph{eliminar\_dibujador}.
+\item +destruir \newline
+Destructor. Se quita a sí mismo de la lista de observadores del agregador observado.
+\end{itemize}
+\subsubsection{Parámetros de instanciación}
+\begin{itemize}
+\item ag : 't General.agregador\_observado \newline
+El agregador que vigilará.
+\end{itemize}
+
+
+\section{Bitmaps}
+\subsection{\emph{dibujador\_bitmap}}
+\subsubsection{Métodos}
+\begin{itemize}
+\item +\emph{activar} \newline
+Hace que el bitmap asociado al dibujador sea el que se use para pintar polígonos desde este momento.
+\item +\emph{destruir} \newline
+Destructor. Libera recursos asociados.
+\end{itemize}
+
+\subsection{dibujador\_bitmap\_RGBA}
+\subsubsection{Relaciones}
+\begin{itemize}
+\item Es una especificación de \Clase{dibujador\_bitmap}
+\item Depende de \Clase{Bitmaps.c\_bitmap\_RGBA}.
+\end{itemize}
+\subsubsection{Atributos}
+\begin{itemize}
+\item bitmap : Bitmaps.c\_bitmap\_RGBA \newline
+El bitmap para este dibujador.
+\item t\_index : GlTex.texture\_id option \newline
+El identificador de textura dentro de OpenGL.
+\end{itemize}
+\subsubsection{Métodos}
+\begin{itemize}
+\item +bitmap : Bitmaps.c\_bitmap\_RGBA \newline
+Getter.
+\item \#enviar\_a\_opengl \newline
+Envía el bitmap a OpenGL, y obtiene un id de textura que guarda en t\_index.
+\item +activar \newline
+Establece como textura actual de OpenGL el bitmap que tiene asociado, enviándolo a OpenGL si es necesario.
+\item +destruir \newline
+Si ha obtenido un identificador de textura de OpenGL, lo libera.
+\end{itemize}
+\subsubsection{Parámetros de instanciación}
+\begin{itemize}
+\item b : Bitmaps.c\_bitmap\_RGBA \newline
+El bitmap que se usará como textura.
+\end{itemize}
+
+\subsection{vigilante\_bitmap\_RGBA}
+\subsubsection{Relaciones}
+\begin{itemize}
+\item Es una especificación de \Clase{vigilante\_agregador}.
+\item Depende de \Clase{dibujador\_bitmap\_RGBA}.
+\item Depende de \Clase{Bitmaps.bitmap\_rgba}.
+\item Depende de \Clase{Geo.bitmap}.
+\item Depende de \Clase{General.agregador\_observado}.
+\item Depende de \Clase{General.asociador}.
+\end{itemize}
+%\subsubsection{Atributos}
+%\begin{itemize}
+%\end{itemize}
+\subsubsection{Métodos}
+\begin{itemize}
+\item +nuevo\_dibujador (b:Bitmaps.bitmap\_rgba) : dibujador\_bitmap\_RGBA \newline
+Instancia un nuevo dibujador para el bitmap pasado como parámetro y lo agrega al asociador \emph{asociador\_bitmaps\_dibujadores}.
+\item +eliminar\_dibujador (b:Bitmaps.bitmap\_rgba) \newline
+Llama al destructor del dibujador asociado al bitmap, y después lo elimina del asociador.
+\end{itemize}
+\subsubsection{Parámetros de instanciación}
+\begin{itemize}
+\item ag : Bitmaps.bitmap\_RGBA General.agregador\_observado \newline
+El parámetro para \Clase{vigilante\_agregador}.
+\end{itemize}
+
+\section{Geometría}
+\subsection{\emph{dibujador\_textura}}
+\subsubsection{Métodos}
+\begin{itemize}
+\item +\emph{activar} \newline
+Activa la textura asociada al dibujador, para que los polígonos se pinten con dicha textura.
+\item +\emph{destruir} \newline
+Destructor. Libera recursos asociados.
+\end{itemize}
+
+\subsection{dibujador\_textura\_bitmap}
+\subsubsection{Relaciones}
+\begin{itemize}
+\item Es una especificación de \Clase{dibujador\_textura}.
+\item Depende de \Clase{Geo.textura}.
+\end{itemize}
+\subsubsection{Atributos}
+\begin{itemize}
+\item textura : Geo.textura\_bitmap \newline
+La textura asociada al dibujador.
+\end{itemize}
+\subsubsection{Métodos}
+\begin{itemize}
+\item +textura : Geo.textura\_bitmap \newline
+Getter.
+\item +activar \newline
+Activa el texturizado en OpenGL y activa el dibujador de bitmaps correspondiente al bitmap que tiene la textura.
+\item +destruir \newline
+No hace nada.
+\end{itemize}
+
+
+\subsection{\emph{vigilante\_textura\_bitmap}}
+\subsubsection{Relaciones}
+\begin{itemize}
+\item Es una especificación de \Clase{vigilante\_agregador}.
+\item Depende de \Clase{dibujador\_textura}.
+\item Depende de \Clase{dibujador\_textura\_bitmap}.
+\item Depende de \Clase{Geo.textura\_bitmap}.
+\item Depende de \Clase{General.agregador\_observado}.
+\item Depende de \Clase{General.asociador}.
+\end{itemize}
+\subsubsection{Métodos}
+\begin{itemize}
+\item +nuevo\_dibujador (t:Geo.textura\_bitmap) : dibujador\_textura\_bitmap \newline
+Instancia un nuevo dibujador para la textura pasada como parámetro y lo agrega al asociador \emph{asociador\_texturas\_dibujadores}.
+\item +eliminar\_dibujador (t:Geo.textura\_bitmap) \newline
+Llama al destructor del dibujador asociado a la textura, y después lo elimina del asociador.
+\end{itemize}
+\subsubsection{Parámetros de instanciación}
+\begin{itemize}
+\item ag : Geo.textura\_bitmap General.agregador\_observado \newline
+El parámetro para \Clase{vigilante\_agregador}.
+\end{itemize}
+
+\subsection{dibujador\_no\_textura}
+\subsubsection{Relaciones}
+\begin{itemize}
+\item Es una especificación de \Clase{dibujador\_textura}.
+\end{itemize}
+\subsubsection{Métodos}
+\begin{itemize}
+\item +activar \newline
+Desactiva el texturizado en OpenGL.
+\item +destruir \newline
+Destructor. No hace nada.
+\end{itemize}
+\subsubsection{Parámetros de instanciación}
+\begin{itemize}
+\item t : Geo.no\_textura\newline
+La no-textura asociada a este dibujador.
+\end{itemize}
+
+\subsection{vigilante\_no\_textura}
+\subsubsection{Relaciones}
+\begin{itemize}
+\item Es una especificación de \Clase{vigilante\_agregador}.
+\item Depende de \Clase{dibujador\_textura}.
+\item Depende de \Clase{dibujador\_no\_textura}.
+\item Depende de \Clase{Geo.no\_textura}.
+\item Depende de \Clase{General.agregador\_observado}.
+\item Depende de \Clase{General.asociador}.
+\end{itemize}
+\subsubsection{Métodos}
+\begin{itemize}
+\item +nuevo\_dibujador (t:Geo.no\_textura) : dibujador\_no\_textura \newline
+Instancia un nuevo dibujador para la no-textura pasada como parámetro y lo agrega al asociador \emph{asociador\_texturas\_dibujadores}.
+\item +eliminar\_dibujador (t:Geo.no\_textura) \newline
+Llama al destructor del dibujador asociado a la no-textura, y después lo elimina del asociador.
+\end{itemize}
+\subsubsection{Parámetros de instanciación}
+\begin{itemize}
+\item ag : Geo.no\_textura General.agregador\_observado \newline
+El parámetro para \Clase{vigilante\_agregador}.
+\end{itemize}
+
+%\subsubsection{Relaciones}
+%\begin{itemize}
+%\item Es una especificación de \Clase{vigilante\_agregador}.
+%\item Depende de \Clase{$dibujador abstracto$}.
+%\item Depende de \Clase{$dibujador concreto$}.
+%\item Depende de \Clase{$clase dibujada$}.
+%\item Depende de \Clase{General.agregador\_observado}.
+%\item Depende de \Clase{General.asociador}.
+%\end{itemize}
+%\subsubsection{Métodos}
+%\begin{itemize}
+%\item +nuevo\_dibujador (t:$clase dibujada$) : $dibujador concreto$ \newline
+%Instancia un nuevo dibujador para $clase dibujada$ pasada como parámetro y lo agrega al asociador \emph{asociador\_$clase abstracta$\_dibujadores}.
+%\item +eliminar\_dibujador (t:Geo.no\_textura) \newline
+%Llama al destructor del dibujador asociado a $clase dibujada$, y después lo elimina del asociador.
+%\end{itemize}
+%\subsubsection{Parámetros de instanciación}
+%\begin{itemize}
+%\item ag : $clase dibujada$ General.agregador\_observado \newline
+%El parámetro para \Clase{vigilante\_agregador}.
+%\end{itemize}
+
+
+\subsection{\emph{dibujador\_malla}}
+\subsubsection{Relaciones}
+\begin{itemize}
+\item Depende de \Clase{Geo.malla}.
+\end{itemize}
+\subsubsection{Atributos}
+\begin{itemize}
+\item malla : Geo.malla \newline
+La malla que va a ser dibujada.
+\end{itemize}
+\subsubsection{Métodos}
+\begin{itemize}
+\item +\emph{dibujar} \newline
+Dibuja la malla.
+\item +\emph{destruir} \newline
+Destructor.
+\end{itemize}
+\subsubsection{Parámetros de instanciación}
+\begin{itemize}
+\item m : Geo.malla\newline
+La malla que va a ser dibujada.
+\end{itemize}
+
+\subsection{dibujador\_malla\_simple\_básico}
+\subsubsection{Relaciones}
+\begin{itemize}
+\item Es una especificación de \Clase{dibujador\_malla}.
+\item Depende de \Clase{Geo.malla\_simple}.
+\item Depende de \Clase{Geo.poligono\_simple}, \Clase{Geo.material\_simple}, \Clase{Geo.capa\_simple}, \Clase{Geo.vertice\_simple}, \Clase{Geo.normal\_simple}, \Clase{Geo.uv\_simple} y \Clase{Geo.color\_simple}.
+\end{itemize}
+\subsubsection{Atributos}
+\begin{itemize}
+\item malla : Geo.malla\_simple \newline
+La malla que será dibujada.
+\end{itemize}
+\subsubsection{Métodos}
+\begin{itemize}
+\item \#dibujar\_vertice (v:Geo.vertice\_simple) \newline
+Extrae las coordenadas, normal, UV y color del vértice y los envía a OpenGL.
+\item \#activar\_material (m:Geo.material\_simple) \newline
+Extrae la textura del material y los datos de iluminación y los envía a OpenGL.
+\item \#activar\_capa (c:Geo.capa\_simple) \newline
+Extrae el material de la capa y lo activa.
+\item \#dibujar\_poligono (p:Geo.poligono\_simple) \newline
+Activa la primera capa del polígono, y envía sus vértices a OpenGL.
+\item +dibujar \newline
+Dibuja todos los polígonos de la malla.
+\item +destruir \newline
+Destructor. No hace nada.
+\end{itemize}
+\subsubsection{Parámetros de instanciación}
+\begin{itemize}
+\item m : Geo.malla\_simple \newline
+La malla que será dibujada.
+\end{itemize}
+
+\subsection{dibujador\_malla\_simple\_opt}
+\subsubsection{Relaciones}
+\begin{itemize}
+\item Es una especificación de \Clase{dibujador\_malla}.
+\item Depende de \Clase{Geo.poligono\_simple}, \Clase{Geo.material\_simple}, \Clase{Geo.capa\_simple}, \Clase{Geo.vertice\_simple}, \Clase{Geo.normal\_simple}, \Clase{Geo.uv\_simple} y \Clase{Geo.color\_simple}.
+\end{itemize}
+\subsubsection{Atributos}
+\begin{itemize}
+\item malla : Geo.malla\_simple \newline
+La malla que será dibujada.
+\item material\_actual : Geo.material\_simple option \newline
+El material que está activado actualmente en OpenGL.
+\item raw\_coords : float Raw.t \newline
+Las coordenadas de los vértices como un bloque de memoria.
+\item raw\_norms : float Raw.t \newline
+Las normales de los vértices como un bloque de memoria.
+\item raw\_color : float Raw.t \newline
+Los colores de los vértices como un bloque de memoria.
+\item raw\_uv1 : float Raw.t \newline
+Las coordenadas UV de los vértices como un bloque de memoria.
+\item lista\_poligonos : (Geo.material\_simple * uint Raw.t * int) list \newline
+Los polígonos como ternas de material, índices en los bloques de memoria y número de vértices.
+\end{itemize}
+\subsubsection{Métodos}
+\begin{itemize}
+\item +inicializador \newline
+Prepara las estructuras raw\_coords, raw\_norms, raw\_color, raw\_uv1 y lista\_poligonos.
+\item \#activar\_material (m : Geo.material\_simple) \newline
+Envía las características de textura e iluminación del material a OpenGL.
+\item \#activar\_material\_opt (m : Geo.material) \newline
+Si el material actual es distinto del material pasado como parámetro, activa este último. Si no, no hace nada.
+\item \#dibujar\_poligono ((material, raw\_vertices, num\_vertices):(Geo.material\_simple * uint Raw.t * int))\newline
+Dibuja el polígono pasado como parámetro triple.
+\item \#dibujar \newline
+Envía las estructuras raw\_coords, raw\_norms, raw\_color, raw\_uv1 y lista\_poligonos a OpenGL, y procede a dibujar todos los polígonos.
+\item +destruir \newline
+Destructor. No hace nada.
+\end{itemize}
+\subsubsection{Parámetros de instanciación}
+\begin{itemize}
+\item m : Geo.malla\_simple \newline
+La malla que será dibujada.
+\end{itemize}
+
+\subsection{dibujador\_malla\_simple}
+Esta clase es un alias de \Clase{dibujador\_malla\_simple\_opt}.
+
+
+\subsection{vigilante\_malla\_simple}
+\subsubsection{Relaciones}
+\begin{itemize}
+\item Es una especificación de \Clase{vigilante\_agregador}.
+\item Depende de \Clase{dibujador\_malla}.
+\item Depende de \Clase{dibujador\_malla\_simple}.
+\item Depende de \Clase{Geo.malla\_simple}.
+\item Depende de \Clase{General.agregador\_observado}.
+\item Depende de \Clase{General.asociador}.
+\end{itemize}
+\subsubsection{Métodos}
+\begin{itemize}
+\item +nuevo\_dibujador (m:Geo.malla\_simple) : dibujador\_malla\_simple \newline
+Instancia un nuevo dibujador para la malla simple pasada como parámetro y lo agrega al asociador \emph{asociador\_mallas\_dibujadores}.
+\item +eliminar\_dibujador (t:Geo.malla\_simple) \newline
+Llama al destructor del dibujador asociado a \Clase{malla\_simple}, y después lo elimina del asociador.
+\end{itemize}
+\subsubsection{Parámetros de instanciación}
+\begin{itemize}
+\item ag : Geo.malla\_simple General.agregador\_observado \newline
+El parámetro para \Clase{vigilante\_agregador}.
+\end{itemize}
+
+
+\section{Objetos}
+\subsection{\emph{i\_dibujador\_objeto}}
+\subsubsection{Métodos}
+\begin{itemize}
+\item +\emph{activar\_luces} \newline
+Envía los datos de las luces a OpenGL.
+\item +\emph{dibujar\_mallas\_p1} \newline
+Los objetos que lleven malla asociada calculan su transformada y almacenan su posición en el ordenador global de objetos.
+\item +\emph{dibujar\_mallas\_p2} \newline
+Los objetos que lleven malla asociada se dibujan en orden de más lejano a más cercano.
+\item +dibujar\_malla \newline
+Mecanismo para dibujar mallas. Por defecto no hace nada.
+\item +\emph{activar\_camara} \newline
+Envía los datos de la cámara que se utilizará para ver la escena a OpenGL.
+\end{itemize}
+
+
+\subsection{\emph{dibujador\_objeto}}
+\subsubsection{Relaciones}
+\begin{itemize}
+\item Es una especificación de \Clase{i\_dibujador\_objeto}.
+\item Es una especificación de \Clase{General.observador}, es decir, es un observador en un patrón observador.
+\item Depende de \Clase{Objetos.objeto}.
+\end{itemize}
+\subsubsection{Atributos}
+\begin{itemize}
+\item objeto : Objetos.objeto \newline
+El objeto que será dibujado.
+\end{itemize}
+\subsubsection{Métodos}
+\begin{itemize}
+\item +actualizar \newline
+Es llamado a través del patrón observador. Por defecto no hace nada.
+\item +activar\_luz \newline
+Es llamado durante la pasada de activación de luces. Por defecto no hace nada.
+\item +añadir\_malla \newline
+Es llamado durante la pasada primera de dibujado de mallas. Por defecto no hace nada.
+\item +dibujar\_malla \newline
+Es llamado durante la pasada segunda de dibujado de mallas. Por defecto no hace nada.
+\item +activar\_camara \newline
+Es llamado durante la pasada de activación de cámara. Por defecto no hace nada.
+\item +destruir \newline
+Destructor. No hace nada.
+\item +aplicar\_transformada \newline
+Aplica la transformada local del objeto a OpenGL.
+\item +desaplicar\_transformada \newline
+Cancela la aplicación de la transformada.
+\item +activar\_luces \newline
+Pasada de activación de luces. Aplica la transformada, se activa su luz, llama a activar\_luces para todos los objetos hijo y desaplica la transformada.
+\item +dibujar\_malla\_p1 \newline
+Pasada de ordenación de mallas. Aplica la transformada, llama a añadir\_malla, llama a dibujar\_mallas\_p1 para todos los objetos hijo y desaplica la transformada.
+\item +dibujar\_malla\_p2 \newline
+Pasada de dibujado de mallas. Con las mallas ordenadas, llama a dibujar\_malla para cada malla, en orden de más lejana a más cercana.
+\end{itemize}
+\subsubsection{Parámetros de instanciación}
+\begin{itemize}
+\item o : Objetos.objeto \newline
+El objeto que será dibujado.
+\end{itemize}
+
+\subsection{dibujador\_objeto\_origen}
+\subsubsection{Relaciones}
+\begin{itemize}
+\item Es una especificación de \Clase{dibujador\_objeto}.
+\end{itemize}
+\subsubsection{Atributos}
+\begin{itemize}
+\item objeto\_origen : Objetos.objeto\_origen\newline
+El objeto origen.
+\end{itemize}
+\subsubsection{Métodos}
+\begin{itemize}
+\item +añadir\_malla \newline
+Borra la lista de mallas ordenadas.
+\item +aplicar\_transformada \newline
+No hace nada.
+\item +desaplicar\_transformada \newline
+No hace nada.
+\item +activar\_luz \newline
+Reinicia las configuraciones de iluminación.
+\end{itemize}
+\subsubsection{Parámetros de instanciación}
+\begin{itemize}
+\item o : Objetos.objeto\_origen \newline
+El atributo de la clase.
+\end{itemize}
+
+\subsection{vigilante\_objeto\_origen}
+\subsubsection{Relaciones}
+\begin{itemize}
+\item Es una especificación de \Clase{vigilante\_agregador}.
+\item Depende de \Clase{i\_dibujador\_objeto}.
+\item Depende de \Clase{dibujador\_objeto\_origen}.
+\item Depende de \Clase{objeto\_origen}.
+\item Depende de \Clase{General.agregador\_observado}.
+\item Depende de \Clase{General.asociador}.
+\end{itemize}
+\subsubsection{Métodos}
+\begin{itemize}
+\item +nuevo\_dibujador (o:objeto\_origen) : dibujador\_objeto\_origen \newline
+Instancia un nuevo dibujador para el objeto origen pasado como parámetro y lo agrega al asociador \emph{asociador\_objetos\_dibujadores}.
+\item +eliminar\_dibujador (o:objeto\_origen) \newline
+Llama al destructor del dibujador asociado al objeto origen, y después lo elimina del asociador.
+\end{itemize}
+\subsubsection{Parámetros de instanciación}
+\begin{itemize}
+\item ag : objeto\_origen General.agregador\_observado \newline
+El parámetro para \Clase{vigilante\_agregador}.
+\end{itemize}
+
+
+\subsection{dibujador\_dummy}
+\subsubsection{Relaciones}
+\begin{itemize}
+\item Es una especificación de \Clase{dibujador\_objeto}.
+\item Depende de \Clase{Objetos.dummy}.
+\end{itemize}
+\subsubsection{Atributos}
+\begin{itemize}
+\item dummy : Objetos.dummy \newline
+El dummy dibujado.
+\end{itemize}
+\subsubsection{Parámetros de instanciación}
+\begin{itemize}
+\item o : Objetos.dummy \newline
+El atributo de la clase.
+\end{itemize}
+
+\subsection{vigilante\_dummy}
+\begin{itemize}
+\item Es una especificación de \Clase{vigilante\_agregador}.
+\item Depende de \Clase{i\_dibujador\_objeto}.
+\item Depende de \Clase{dibujador\_dummy}.
+\item Depende de \Clase{Objetos.dummy}.
+\item Depende de \Clase{General.agregador\_observado}.
+\item Depende de \Clase{General.asociador}.
+\end{itemize}
+\subsubsection{Métodos}
+\begin{itemize}
+\item +nuevo\_dibujador (o:Objetos.dummy) : dibujador\_dummy \newline
+Instancia un nuevo dibujador para el dummy pasado como parámetro y lo agrega al asociador \emph{asociador\_objetos\_dibujadores}.
+\item +eliminar\_dibujador (o:Objetos.dummy) \newline
+Llama al destructor del dibujador asociado al dummy, y después lo elimina del asociador.
+\end{itemize}
+\subsubsection{Parámetros de instanciación}
+\begin{itemize}
+\item ag : Objetos.dummy General.agregador\_observado \newline
+El parámetro para \Clase{vigilante\_agregador}.
+\end{itemize}
+
+
+\subsection{dibujador\_punto\_luz}
+\subsubsection{Relaciones}
+\begin{itemize}
+\item Es una especificación de \item{dibujador\_objeto}.
+\end{itemize}
+\subsubsection{Atributos}
+\begin{itemize}
+\item punto\_luz : Objetos.punto\_luz\newline
+La luz asociada al dibujador.
+\end{itemize}
+\subsubsection{Métodos}
+\begin{itemize}
+\item +activar\_luz \newline
+Envía los datos de la luz a OpenGL.
+\end{itemize}
+\subsubsection{Parámetros de instanciación}
+\begin{itemize}
+\item o : Objetos.punto\_luz \newline
+El atributo de la clase.
+\end{itemize}
+
+\subsection{vigilante\_punto\_luz}
+\begin{itemize}
+\item Es una especificación de \Clase{vigilante\_agregador}.
+\item Depende de \Clase{i\_dibujador\_objeto}.
+\item Depende de \Clase{dibujador\_punto\_luz}.
+\item Depende de \Clase{Objetos.punto\_luz}.
+\item Depende de \Clase{General.agregador\_observado}.
+\item Depende de \Clase{General.asociador}.
+\end{itemize}
+\subsubsection{Métodos}
+\begin{itemize}
+\item +nuevo\_dibujador (o:Objetos.punto\_luz) : dibujador\_punto\_luz \newline
+Instancia un nuevo dibujador para el punto de luz pasado como parámetro y lo agrega al asociador \emph{asociador\_objetos\_dibujadores}.
+\item +eliminar\_dibujador (o:Objetos.punto\_luz) \newline
+Llama al destructor del dibujador asociado al punto de luz, y después lo elimina del asociador.
+\end{itemize}
+\subsubsection{Parámetros de instanciación}
+\begin{itemize}
+\item ag : Objetos.punto\_luz General.agregador\_observado \newline
+El parámetro para \Clase{vigilante\_agregador}.
+\end{itemize}
+
+\subsection{dibujador\_foco}
+\subsubsection{Relaciones}
+\begin{itemize}
+\item Es una especificación de \Clase{dibujador\_objeto}.
+\item Depende de \Clase{Objetos.foco}.
+\end{itemize}
+\subsubsection{Atributos}
+\begin{itemize}
+\item foco : Objetos.foco \newline
+El foco para el dibujador.
+\end{itemize}
+\subsubsection{Métodos}
+\begin{itemize}
+\item activar\_luz \newline
+Envía los parámetros del foco a OpenGL.
+\end{itemize}
+\subsubsection{Parámetros de instanciación}
+\begin{itemize}
+\item f : Objetos.foco \newline
+El atributo de la clase.
+\end{itemize}
+
+\subsection{vigilante\_foco}
+\begin{itemize}
+\item Es una especificación de \Clase{vigilante\_agregador}.
+\item Depende de \Clase{i\_dibujador\_objeto}.
+\item Depende de \Clase{dibujador\_foco}.
+\item Depende de \Clase{Objetos.foco}.
+\item Depende de \Clase{General.agregador\_observado}.
+\item Depende de \Clase{General.asociador}.
+\end{itemize}
+\subsubsection{Métodos}
+\begin{itemize}
+\item +nuevo\_dibujador (f:Objetos.foco) : dibujador\_foco \newline
+Instancia un nuevo dibujador para el foco pasado como parámetro y lo agrega al asociador \emph{asociador\_objetos\_dibujadores}.
+\item +eliminar\_dibujador (f:Objetos.foco) \newline
+Llama al destructor del dibujador asociado al foco, y después lo elimina del asociador.
+\end{itemize}
+\subsubsection{Parámetros de instanciación}
+\begin{itemize}
+\item ag : Objetos.foco General.agregador\_observado \newline
+El parámetro para \Clase{vigilante\_agregador}.
+\end{itemize}
+
+\subsection{dibujador\_sol}
+\subsubsection{Relaciones}
+\begin{itemize}
+\item Es una especificación de \Clase{dibujador\_objeto}.
+\item Depende de \Clase{Objetos.sol}.
+\end{itemize}
+\subsubsection{Atributos}
+\begin{itemize}
+\item sol : Objetos.sol \newline
+El sol asociado al dibujador.
+\end{itemize}
+\subsubsection{Métodos}
+\begin{itemize}
+\item activar\_luz \newline
+Envía los datos del sol a OpenGL.
+\end{itemize}
+\subsubsection{Parámetros de instanciación}
+\begin{itemize}
+\item o : Objetos.sol \newline
+El atributo de la clase.
+\end{itemize}
+
+\subsection{vigilante\_sol}
+\begin{itemize}
+\item Es una especificación de \Clase{vigilante\_agregador}.
+\item Depende de \Clase{i\_dibujador\_objeto}.
+\item Depende de \Clase{dibujador\_sol}.
+\item Depende de \Clase{Objetos.sol}.
+\item Depende de \Clase{General.agregador\_observado}.
+\item Depende de \Clase{General.asociador}.
+\end{itemize}
+\subsubsection{Métodos}
+\begin{itemize}
+\item +nuevo\_dibujador (o:Objetos.sol) : dibujador\_sol \newline
+Instancia un nuevo dibujador para el sol pasado como parámetro y lo agrega al asociador \emph{asociador\_objetos\_dibujadores}.
+\item +eliminar\_dibujador (o:Objetos.sol) \newline
+Llama al destructor del dibujador asociado al sol, y después lo elimina del asociador.
+\end{itemize}
+\subsubsection{Parámetros de instanciación}
+\begin{itemize}
+\item ag : Objetos.sol General.agregador\_observado \newline
+El parámetro para \Clase{vigilante\_agregador}.
+\end{itemize}
+
+\subsection{dibujador\_camara\_perspectiva}
+\subsubsection{Relaciones}
+\begin{itemize}
+\item Es una especificación de \Clase{dibujador\_objeto}.
+\item Depende de \Clase{Objetos.camara\_perspectiva}.
+\end{itemize}
+\subsubsection{Atributos}
+\begin{itemize}
+\item camara\_perspectiva : Objetos.camara\_perspectiva \newline
+La cámara asociada a este dibujador.
+\end{itemize}
+\subsubsection{Métodos}
+\begin{itemize}
+\item activar\_camara \newline
+Envía los datos de proyección y perspectiva de la cámara a OpenGL.
+\end{itemize}
+\subsubsection{Parámetros de instanciación}
+\begin{itemize}
+\item c : Objetos.camara\_perspectiva \newline
+El atributo de la clase.
+\end{itemize}
+
+\subsection{vigilante\_camara\_perspectiva}
+\begin{itemize}
+\item Es una especificación de \Clase{vigilante\_agregador}.
+\item Depende de \Clase{i\_dibujador\_objeto}.
+\item Depende de \Clase{dibujador\_camara\_perspectiva}.
+\item Depende de \Clase{Objetos.camara\_perspectiva}.
+\item Depende de \Clase{General.agregador\_observado}.
+\item Depende de \Clase{General.asociador}.
+\end{itemize}
+\subsubsection{Métodos}
+\begin{itemize}
+\item +nuevo\_dibujador (c:Objetos.camara\_perspectiva) : dibujador\_camara\_perspectiva \newline
+Instancia un nuevo dibujador para la cámara pasada como parámetro y lo agrega al asociador \emph{asociador\_objetos\_dibujadores}.
+\item +eliminar\_dibujador (c:Objetos.camara\_perspectiva) \newline
+Llama al destructor del dibujador asociado a la cámara, y después lo elimina del asociador.
+\end{itemize}
+\subsubsection{Parámetros de instanciación}
+\begin{itemize}
+\item ag : Objetos.camara\_perspectiva General.agregador\_observado \newline
+El parámetro para \Clase{vigilante\_agregador}.
+\end{itemize}
+
+\subsection{dibujador\_camara\_ortografica}
+\subsubsection{Relaciones}
+\begin{itemize}
+\item Es una especificación de \Clase{dibujador\_objeto}.
+\item Depende de \Clase{Objetos.camara\_ortografica}.
+\end{itemize}
+\subsubsection{Atributos}
+\begin{itemize}
+\item camara\_ortografica : Objetos.camara\_ortografica\newline
+La cámara que está asociada a este dibujador.
+\end{itemize}
+\subsubsection{Métodos}
+\begin{itemize}
+\item +activar\_camara \newline
+Envía los parámetros de proyección y situación a OpenGL.
+\end{itemize}
+\subsubsection{Parámetros de instanciación}
+\begin{itemize}
+\item c : Objetos.camara\_ortografica\newline
+El atributo de la clase.
+\end{itemize}
+
+\subsection{vigilante\_camara\_ortografica}
+\begin{itemize}
+\item Es una especificación de \Clase{vigilante\_agregador}.
+\item Depende de \Clase{i\_dibujador\_objeto}.
+\item Depende de \Clase{dibujador\_camara\_ortografica}.
+\item Depende de \Clase{Objetos.camara\_ortografica}.
+\item Depende de \Clase{General.agregador\_observado}.
+\item Depende de \Clase{General.asociador}.
+\end{itemize}
+\subsubsection{Métodos}
+\begin{itemize}
+\item +nuevo\_dibujador (c:Objetos.camara\_ortografica) : dibujador\_camara\_ortografica \newline
+Instancia un nuevo dibujador para la cámara pasada como parámetro y lo agrega al asociador \emph{asociador\_objetos\_dibujadores}.
+\item +eliminar\_dibujador (c:Objetos.camara\_ortografica) \newline
+Llama al destructor del dibujador asociado a la cámara, y después lo elimina del asociador.
+\end{itemize}
+\subsubsection{Parámetros de instanciación}
+\begin{itemize}
+\item ag : Objetos.camara\_ortografica General.agregador\_observado \newline
+El parámetro para \Clase{vigilante\_agregador}.
+\end{itemize}
+
+\subsection{dibujador\_objeto\_malla}
+\subsubsection{Relaciones}
+\begin{itemize}
+\item Es una especificación de \Clase{dibujador\_objeto}.
+\item Depende de \Clase{Objetos.objeto\_malla}.
+\item Depende de \Clase{Geo.malla}.
+\end{itemize}
+\subsubsection{Atributos}
+\begin{itemize}
+\item objeto\_malla : Objetos.objeto\_malla \newline
+El objeto asociado a este dibujador.
+\item mi\_transformada : GlMat.t \newline
+Matriz de la transformada del objeto en coordenadas globales.
+\end{itemize}
+\subsubsection{Métodos}
+\begin{itemize}
+\item +añadir\_malla \newline
+Guarda la transformada global del objeto, lee las coordenadas y almacena el dibujador en el ordenador global de objetos.
+\item +dibujar\_malla \newline
+Recupera la transformada y dibuja la malla.
+\end{itemize}
+\subsubsection{Parámetros de instanciación}
+\begin{itemize}
+\item o : Objetos.objeto\_malla \newline
+El atributo de la clase.
+\end{itemize}
+
+\subsection{vigilante\_objeto\_malla}
+\begin{itemize}
+\item Es una especificación de \Clase{vigilante\_agregador}.
+\item Depende de \Clase{i\_dibujador\_objeto}.
+\item Depende de \Clase{dibujador\_objeto\_malla}.
+\item Depende de \Clase{Objetos.objeto\_malla}.
+\item Depende de \Clase{General.agregador\_observado}.
+\item Depende de \Clase{General.asociador}.
+\end{itemize}
+\subsubsection{Métodos}
+\begin{itemize}
+\item +nuevo\_dibujador (o:Objetos.objeto\_malla) : dibujador\_objeto\_malla \newline
+Instancia un nuevo dibujador para el objeto pasado como parámetro y lo agrega al asociador \emph{asociador\_objetos\_dibujadores}.
+\item +eliminar\_dibujador (o:Objetos.objeto\_malla) \newline
+Llama al destructor del dibujador asociado al objeto, y después lo elimina del asociador.
+\end{itemize}
+\subsubsection{Parámetros de instanciación}
+\begin{itemize}
+\item ag : Objetos.objeto\_malla General.agregador\_observado \newline
+El parámetro para \Clase{vigilante\_agregador}.
+\end{itemize}
+
+\section{Render abstracto}
+\subsection{\emph{dibujador\_capa}}
+\subsubsection{Relaciones}
+\begin{itemize}
+\item Depende de \Clase{Render.capa}.
+\end{itemize}
+\subsubsection{Atributos}
+\begin{itemize}
+\item capa : Render.capa \newline
+La capa de este dibujador.
+\end{itemize}
+\subsubsection{Métodos}
+\begin{itemize}
+\item +\emph{dibujar} \newline
+Dibuja la capa.
+\item +destruir \newline
+Destructor. Por defecto no hace nada.
+\end{itemize}
+\subsubsection{Parámetros de instanciación}
+\begin{itemize}
+\item c : Render.capa  \newline
+El atributo de la clase.
+\end{itemize}
+
+\subsection{dibujador\_capa3d}
+\subsubsection{Relaciones}
+\begin{itemize}
+\item Es una especificación de \Clase{dibujador\_capa}.
+\end{itemize}
+\subsubsection{Atributos}
+\begin{itemize}
+\item capa3d : Render.capa3d \newline
+La capa que dibujará.
+\end{itemize}
+\subsubsection{Métodos}
+\begin{itemize}
+\item +dibujar \newline
+Activa el dibujador de la cámara, después lanza las tres pasadas sobre los objetos, primero activando las luces, y luego las dos pasadas de dibujar mallas.
+\end{itemize}
+\subsubsection{Parámetros de instanciación}
+\begin{itemize}
+\item c : Render.capa3d\newline
+El atributo de la clase.
+\end{itemize}
+
+\subsection{vigilante\_capa\_3d}
+\begin{itemize}
+\item Es una especificación de \Clase{vigilante\_agregador}.
+\item Depende de \Clase{dibujador\_capa}.
+\item Depende de \Clase{dibujador\_capa3d}.
+\item Depende de \Clase{Render.capa3d}.
+\item Depende de \Clase{General.agregador\_observado}.
+\item Depende de \Clase{General.asociador}.
+\end{itemize}
+\subsubsection{Métodos}
+\begin{itemize}
+\item +nuevo\_dibujador (c:Render.capa3d) : dibujador\_capa3d \newline
+Instancia un nuevo dibujador para la capa pasada como parámetro y lo agrega al asociador \emph{asociador\_capas\_dibujadores}.
+\item +eliminar\_dibujador (c:Render.capa3d) \newline
+Llama al destructor del dibujador asociado a la capa, y después lo elimina del asociador.
+\end{itemize}
+\subsubsection{Parámetros de instanciación}
+\begin{itemize}
+\item ag : Render.capa3d General.agregador\_observado \newline
+El parámetro para \Clase{vigilante\_agregador}.
+\end{itemize}
+
+\subsection{dibujador\_capa\_nula}
+\subsubsection{Relaciones}
+\begin{itemize}
+\item Es una especificación de \Clase{dibujador\_capa}.
+\end{itemize}
+\subsubsection{Atributos}
+\begin{itemize}
+\item capa\_nula : Render.capa\_nula\newline
+La capa asociada al dibujador.
+\end{itemize}
+\subsubsection{Métodos}
+\begin{itemize}
+\item dibujar \newline
+Una capa nula representa una capa que no hace nada. Este método, por tanto, no hace nada.
+\end{itemize}
+\subsubsection{Parámetros de instanciación}
+\begin{itemize}
+\item c : Render.capa\_nula \newline
+El atributo de la clase.
+\end{itemize}
+
+\subsection{vigilante\_capa\_nula}
+\begin{itemize}
+\item Es una especificación de \Clase{vigilante\_agregador}.
+\item Depende de \Clase{dibujador\_capa}.
+\item Depende de \Clase{dibujador\_capa\_nula}.
+\item Depende de \Clase{Render.capa\_nula}.
+\item Depende de \Clase{General.agregador\_observado}.
+\item Depende de \Clase{General.asociador}.
+\end{itemize}
+\subsubsection{Métodos}
+\begin{itemize}
+\item +nuevo\_dibujador (c:Render.capa\_nula) : dibujador\_capa\_nula \newline
+Instancia un nuevo dibujador para la capa pasada como parámetro y lo agrega al asociador \emph{asociador\_capas\_dibujadores}.
+\item +eliminar\_dibujador (c:Render.capa\_nula) \newline
+Llama al destructor del dibujador asociado a la capa, y después lo elimina del asociador.
+\end{itemize}
+\subsubsection{Parámetros de instanciación}
+\begin{itemize}
+\item ag : Render.capa\_nula General.agregador\_observado \newline
+El parámetro para \Clase{vigilante\_agregador}.
+\end{itemize}
+
+\subsection{dibujador\_capa\_borrado}
+\subsubsection{Relaciones}
+\begin{itemize}
+\item Es una especificación de \Clase{dibujador\_capa}.
+\item Depende de \Clase{Render.capa\_borrado}.
+\end{itemize}
+\subsubsection{Atributos}
+\begin{itemize}
+\item capa\_borrado : Render.capa\_borrado \newline
+La capa asociada al dibujador.
+\end{itemize}
+\subsubsection{Métodos}
+\begin{itemize}
+\item +dibujar \newline
+Extrae el color de la capa de borrado, y pinta toda la pantalla con ese color.
+\end{itemize}
+\subsubsection{Parámetros de instanciación}
+\begin{itemize}
+\item c : Render.capa\_borrado \newline
+El atributo de la clase.
+\end{itemize}
+
+\subsection{vigilante\_capa\_borrado}
+\begin{itemize}
+\item Es una especificación de \Clase{vigilante\_agregador}.
+\item Depende de \Clase{dibujador\_capa}.
+\item Depende de \Clase{dibujador\_capa\_borrado}.
+\item Depende de \Clase{Render.capa\_borrado}.
+\item Depende de \Clase{General.agregador\_observado}.
+\item Depende de \Clase{General.asociador}.
+\end{itemize}
+\subsubsection{Métodos}
+\begin{itemize}
+\item +nuevo\_dibujador (c:Render.capa\_borrado) : dibujador\_capa\_borrado \newline
+Instancia un nuevo dibujador para la capa pasada como parámetro y lo agrega al asociador \emph{asociador\_capas\_dibujadores}.
+\item +eliminar\_dibujador (c:Render.capa\_borrado) \newline
+Llama al destructor del dibujador asociado a la capa, y después lo elimina del asociador.
+\end{itemize}
+\subsubsection{Parámetros de instanciación}
+\begin{itemize}
+\item ag : Render.capa\_borrado General.agregador\_observado \newline
+El parámetro para \Clase{vigilante\_agregador}.
+\end{itemize}
+
+
+\subsection{dibujador\_capa\_borrado\_zbuffer}
+\subsubsection{Relaciones}
+\begin{itemize}
+\item Es una especificación de \Clase{dibujador\_capa}.
+\item Depende de \Clase{Render.capa\_borrado\_zbuffer}.
+\end{itemize}
+\subsubsection{Atributos}
+\begin{itemize}
+\item capa\_borrado : Render.capa\_borrado\_zbuffer \newline
+La capa asociada al dibujador.
+\end{itemize}
+\subsubsection{Métodos}
+\begin{itemize}
+\item dibujar\newline
+Limpia el buffer de profundidad (zbuffer).
+\end{itemize}
+\subsubsection{Parámetros de instanciación}
+\begin{itemize}
+\item c : Render.capa\_borrado\_zbuffer\newline
+El atributo de la clase.
+\end{itemize}
+
+\subsection{vigilante\_capa\_borrado\_zbuffer}
+\begin{itemize}
+\item Es una especificación de \Clase{vigilante\_agregador}.
+\item Depende de \Clase{dibujador\_capa}.
+\item Depende de \Clase{dibujador\_capa\_borrado\_zbuffer}.
+\item Depende de \Clase{Render.capa\_borrado\_zbuffer}.
+\item Depende de \Clase{General.agregador\_observado}.
+\item Depende de \Clase{General.asociador}.
+\end{itemize}
+\subsubsection{Métodos}
+\begin{itemize}
+\item +nuevo\_dibujador (c:Render.capa\_borrado\_zbuffer) : dibujador\_capa\_borrado\_zbuffer \newline
+Instancia un nuevo dibujador para la capa pasada como parámetro y lo agrega al asociador \emph{asociador\_capas\_dibujadores}.
+\item +eliminar\_dibujador (c:Render.capa\_borrado\_zbuffer) \newline
+Llama al destructor del dibujador asociado a la capa, y después lo elimina del asociador.
+\end{itemize}
+\subsubsection{Parámetros de instanciación}
+\begin{itemize}
+\item ag : Render.capa\_borrado\_zbuffer General.agregador\_observado \newline
+El parámetro para \Clase{vigilante\_agregador}.
+\end{itemize}
+
+
+\subsection{dibujador\_escena}
+\subsubsection{Relaciones}
+\begin{itemize}
+\item Depende de \Clase{Render.escena}.
+\end{itemize}
+\subsubsection{Atributos}
+\begin{itemize}
+\item escena : Render.escena \newline
+La escena que será dibujada.
+\end{itemize}
+\subsubsection{Métodos}
+\begin{itemize}
+\item dibujar \newline
+Lanza el dibujador de cada una de las capas en orden.
+\end{itemize}
+\subsubsection{Parámetros de instanciación}
+\begin{itemize}
+\item e : Render.escena \newline
+El atributo de la clase.
+\end{itemize}
+
+\subsection{vigilante\_escena}
+\begin{itemize}
+\item Es una especificación de \Clase{vigilante\_agregador}.
+\item Depende de \Clase{dibujador\_escena}.
+\item Depende de \Clase{Render.escena}.
+\item Depende de \Clase{General.agregador\_observado}.
+\item Depende de \Clase{General.asociador}.
+\end{itemize}
+\subsubsection{Métodos}
+\begin{itemize}
+\item +nuevo\_dibujador (e:Render.escena) : dibujador\_escena \newline
+Instancia un nuevo dibujador para la escena pasada como parámetro y lo agrega al asociador \emph{asociador\_escenas\_dibujadores}.
+\item +eliminar\_dibujador (e:Render.escena) \newline
+Llama al destructor del dibujador asociado a la escena, y después lo elimina del asociador.
+\end{itemize}
+\subsubsection{Parámetros de instanciación}
+\begin{itemize}
+\item ag : Render.escena General.agregador\_observado \newline
+El parámetro para \Clase{vigilante\_agregador}.
+\end{itemize}
+
+
+\subsection{\emph{dibujador\_pantalla}}
+\subsubsection{Relaciones}
+\begin{itemize}
+\item Es una especificación de \Clase{General.observador}, es decir, es un observador en un patrón observador.
+\item Depende de Render.pantalla.
+\end{itemize}
+\subsubsection{Atributos}
+\begin{itemize}
+\item pantalla : Render.pantalla \newline
+La pantalla asociada al dibujador.
+\end{itemize}
+\subsubsection{Métodos}
+\begin{itemize}
+\item +dibujar \newline
+Envía las características de la pantalla a OpenGL, y procede a dibujar la escena.
+\end{itemize}
+\subsubsection{Parámetros de instanciación}
+\begin{itemize}
+\item p : Render.pantalla \newline
+El atributo de la clase.
+\end{itemize}
+
+\subsection{dibujador\_monitor}
+\subsubsection{Relaciones}
+\begin{itemize}
+\item Es una especificación de \Clase{dibujador\_pantalla}
+\item Depende de \Clase{Render.monitor}.
+\end{itemize}
+\subsubsection{Atributos}
+\begin{itemize}
+\item monitor : Render.monitor \newline
+El monitor asociado al dibujador.
+\item modo\_anterior : Render.tmodo\_pantalla \newline
+El modo de pantalla anterior a la actualización.
+\end{itemize}
+\subsubsection{Métodos}
+\begin{itemize}
+\item +actualizar \newline
+Recupera los cambios en el modo de vídeo del monitor y los envía a OpenGL.
+\end{itemize}
+\subsubsection{Parámetros de instanciación}
+\begin{itemize}
+\item m : Render.monitor \newline
+El atributo de la clase.
+\end{itemize}
+
+\subsection{Motor gráfico opengl}
+\subsubsection{Relaciones}
+\begin{itemize}
+\item Es una especificación de \Clase{Vista.motor}.
+\item Depende de \Clase{General.agregador}.
+\item Depende de \Clase{Bitmaps.bitmap\_RGBA}.
+\item Depende de \Clase{vigilante\_bitmap\_RGBA}.
+\item Depende de \Clase{Geo.textura\_bitmap}.
+\item Depende de \Clase{vigilante\_textura\_bitmap}.
+\item Depende de \Clase{Geo.no\_textura}.
+\item Depende de \Clase{vigilante\_no\_textura}.
+\item Depende de \Clase{Geo.malla\_simple}.
+\item Depende de \Clase{vigilante\_malla\_simple}.
+\item Depende de \Clase{Objetos.objeto\_origen}.
+\item Depende de \Clase{vigilante\_objeto\_origen}.
+\item Depende de \Clase{Objetos.dummy}.
+\item Depende de \Clase{vigilante\_dummy}.
+\item Depende de \Clase{Objetos.punto\_luz}.
+\item Depende de \Clase{vigilante\_punto\_luz}.
+\item Depende de \Clase{Objetos.foco}.
+\item Depende de \Clase{vigilante\_foco}.
+\item Depende de \Clase{Objetos.sol}.
+\item Depende de \Clase{vigilante\_sol}.
+\item Depende de \Clase{Objetos.camara\_perspectiva}.
+\item Depende de \Clase{vigilante\_camara\_perspectiva}.
+\item Depende de \Clase{Objetos.camara\_ortografica}.
+\item Depende de \Clase{vigilante\_camara\_ortografica}.
+\item Depende de \Clase{Objetos.objeto\_malla}.
+\item Depende de \Clase{vigilante\_objeto\_malla}.
+\item Depende de \Clase{Render.capa3d}.
+\item Depende de \Clase{vigilante\_capa3d}.
+\item Depende de \Clase{Render.capa\_nula}.
+\item Depende de \Clase{vigilante\_capa\_nula}.
+\item Depende de \Clase{Render.capa\_borrado}.
+\item Depende de \Clase{vigilante\_capa\_borrado}.
+\item Depende de \Clase{Render.capa\_borrado\_zbuffer}.
+\item Depende de \Clase{vigilante\_capa\_borrado\_zbuffer}.
+\item Depende de \Clase{Render.escena}.
+\item Depende de \Clase{vigilante\_escena}.
+\item Depende de \Clase{Render.monitor}.
+\item Depende de \Clase{dibujador\_monitor}.
+\end{itemize}
+\subsubsection{Atributos}
+\begin{itemize}
+\item vigilante\_bitmap\_RGBA : vigilante\_bitmap\_RGBA option
+\item vigilante\_textura\_bitmap : vigilante\_textura\_bitmap option
+\item vigilante\_no\_textura : vigilante\_no\_textura option
+\item vigilante\_malla\_simple : vigilante\_malla\_simple option
+\item vigilante\_objeto\_origen : vigilante\_objeto\_origen option
+\item vigilante\_dummy : vigilante\_dummy option
+\item vigilante\_punto\_luz : vigilante\_punto\_luz option
+\item vigilante\_foco : vigilante\_foco option
+\item vigilante\_sol : vigilante\_sol option
+\item vigilante\_camara\_perspectiva : vigilante\_camara\_perspectiva option
+\item vigilante\_camara\_ortografica : vigilante\_camara\_ortografica option
+\item vigilante\_objeto\_malla : vigilante\_objeto\_malla option
+\item vigilante\_capa3d : vigilante\_capa3d option
+\item vigilante\_capa\_nula : vigilante\_capa\_nula option
+\item vigilante\_capa\_borrado : vigilante\_capa\_borrado option
+\item vigilante\_capa\_borrado\_zbuffer : vigilante\_capa\_borrado\_zbuffer option
+\item vigilante\_escena : vigilante\_escena option \newline
+Los vigilantes para cada tipo de objeto dibujable.
+
+\end{itemize}
+\subsubsection{Métodos}
+\begin{itemize}
+\item \#preparar\_dibujadores\_bitmap\_RGBA
+\item \#preparar\_dibujadores\_textura\_bitmap
+\item \#preparar\_dibujadores\_malla\_simple
+\item \#preparar\_dibujadores\_objeto\_origen
+\item \#preparar\_dibujadores\_dummy
+\item \#preparar\_dibujadores\_punto\_luz
+\item \#preparar\_dibujadores\_foco
+\item \#preparar\_dibujadores\_sol
+\item \#preparar\_dibujadores\_camara\_perspectiva
+\item \#preparar\_dibujadores\_camara\_ortografica
+\item \#preparar\_dibujadores\_objeto\_malla
+\item \#preparar\_dibujadores\_capa3d
+\item \#preparar\_dibujadores\_capa\_nula
+\item \#preparar\_dibujadores\_capa\_borrado
+\item \#preparar\_dibujadores\_capa\_borrado\_zbuffer
+\item \#preparar\_dibujadores\_escena\newline
+Para cada tipo de clase, instancia el vigilante correspondiente, y ordena al vigilante instanciar un dibujador para cada objeto asociado al contador de objetos de ese tipo. Además, guarda el vigilante en el atributo correspondiente.
+
+\item +inicializar \newline
+Inicializa los parámetros de OpenGL, y llama a cada uno de los métodos preparar\_dibujadores.
+
+\item +ejecutar \newline
+Ordena pintar cada una de las pantallas disponibles.
+
+\item +terminar \newline
+Destructor. 
+
+
+\end{itemize}
+%\subsubsection{Parámetros de instanciación}
+%\begin{itemize}
+%\end{itemize}
+
+

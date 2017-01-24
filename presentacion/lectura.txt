@@ -1,0 +1,116 @@
+Con el permiso del tribunal procedo a la defensa del proyecto que he desarrollado bajo la supervisión del tutor don José Manuel Marqués Corral.
+d1:
+El proyecto se llama "Desarrollo de un motor gráfico y bibliotecas de apoyo para la construcción de videojuegos".
+
+d2:
+La industria del videojuego presenta mejores resultados año tras año, ya que el videojuego se ha convertido en una forma más de entretenimiento como el cine o la televisión. Pero, como cualquier otra industria, hay una gran competición por hacer el mejor producto que se venda lo mejor posible. En nuestro caso concreto, además tenemos un problema añadido: y es que los ordenadores han aumentado exponencialmente de potencia en las últimas décadas. Así, los desarrolladores se ven obligados a hacer videojuegos más y más complejos, con mejores gráficos, mejor inteligencia artificial, mejor de todo; que aprovechen la potencia extra que van consiguiendo los nuevos ordenadores. Inevitablemente, desarrollar videojuegos más complejos es más caro, ya que requiere más profesionales trabajando más tiempo. Por eso nos planteamos la posibilidad de abaratar los costes de desarrollo.
+
+Siguiendo las propuestas de la ingeniería del software, buscamos abaratar construyendo las estructuras y módulos que tienen todos los videojuegos. Así dispondremos de una base prefabricada sobre la que nos será más sencillo trabajar.
+
+d3:
+El objetivo principal de este proyecto es construír un motor gráfico, y unas bibliotecas con las que desarrollar videojuegos sea más sencillo y económico. 
+
+El objetivo secundario es desarrollar un modelo arquitectónico para videojuegos, basado en el modelo de aplicación interactiva, e integrar en él el motor gráfico y las bibliotecas.
+
+Por último, hay que construir una demostración que muestre que funciona correctamente.
+
+d4.
+El motor gráfico se encargará de mostrar los gráficos de los videojuegos que desarrollemos posteriormente. Puesto que queremos que sirva para cualquier videojuego, nos interesa que sea flexible. Nos centraremos en un conjunto de características, pero no cerraremos la posibilidad de extenderlo en otras direcciones.
+
+Queremos que tenga gráficos 3D, con mallas de polígonos, texturas, iluminación y cámaras, pero queremos mantener la posibilidad de construir imágenes bidimensionales.
+Como biblioteca de dibujado utilizaremos OpenGL, ya que es multiplataforma y hay buena documentación, pero no queremos que el motor gráfico esté limitado a esta biblioteca.
+Y queremos que sea rápido, porque tiene que construir muchas imágenes cada segundo.
+
+d5:
+Además del motor gráfico, es necesario desarrollar una serie de bibliotecas en las que se apoyará el mismo. Puesto que queremos desarrollar juegos, necesitamos una manera en la que especificar la forma de los mismos, así como las reglas que los componen y el comportamiento de sus entidades. Por eso, desarrollaremos un mecanismo básico que nos servirá para organizar las reglas del juego.
+
+Por otra parte, los videojuegos típicamente requieren la lectura de gran cantidad de recursos, tales como mallas de polígonos, mapas de bits y texturas. Es muy recomendable disponer de algún sistema de gestión que nos permita centralizar y optimizar esta tarea.
+
+d6:
+Primero, nos centraremos en la arquitectura general del sistema, antes de entrar en los requisitos de cada uno de los componentes.
+
+(señalando ControlGeneral) El punto central de la aplicación será el Control General. Este subsistema se encargará de hacer funcionar todo correctamente, llamando a los demás componentes en el orden adecuado. En cada fotograma, la aplicación realizará tres pasos. Primero, pedirá al sistema operativo las acciones que ha realizado el jugador, tales como pulsar botones, o mover mandos. Después, llamará a la lógica del juego, que procesará las acciones del jugador y generará el estado de los gráficos para el fotograma actual. Por último, llamará al motor gráfico para pintar el fotograma actual, y el jugador verá el resultado de sus acciones. Cuando el motor gráfico requiera otras mallas de polígonos o texturas, recurrirá al gestor de recursos.
+
+d7:
+Vista la arquitectura, ahora nos centraremos en el motor gráfico. Los requisitos que tiene son bastante amplios, y están descritos en la memoria. 
+
+En esencia, el motor gráfico debe estar separado en tres niveles, que nos proporcionará acceso a entidades de distinta complejidad. En el nivel más bajo tenemos la geometría. En este nivel tratamos mallas de polígonos, y los sub-objetos que las componen, tales como vértices y texturas. En el nivel intermedio tenemos la organización de una escena como un conjunto de objetos, imitando un plató de televisión. Tenemos mallas de polígonos, tenemos iluminación y tenemos cámaras. Por último, el nivel de pantalla nos sirve para asignar escenas a pantallas concretas y controlar la manera en la que se dibujan.
+
+Por otra parte, el motor gráfico debe tener un mecanismo de dibujado intercambiable, inicialmente basado en OpenGL. Esto es, las entidades que hemos descrito antes serán pintadas en pantalla utilizando un subsistema que use OpenGL, y dicho subsistema será fácilmente intercambiable y modificable. Si desarrollamos otro sistema de pintado más adelante, podremos aplicarlo fácilmente.
+
+Por último, el motor gráfico debe estar optimizado para funcionar lo más rápidamente posible. Un juego típico muestra al menos 20 fotogramas por segundo. Es decir, el bucle que describimos antes (señalando si tal la diapositiva anterior) debe ejecutarse al menos 20 veces cada segundo. Eso significa que todos los subsistemas, incluyendo el motor gráfico, tienen un tiempo muy limitado para hacer sus tareas.
+
+d8: El modelo arquitectónico del motor gráfico está pensado desde los requisitos. Así, por una parte, tenemos los tres niveles que describimos antes: geometría, objetos y pantalla, que ofrecen un interfaz conjunto para ser controlados desde la lógica del juego. Por otra parte, tenemos el motor opengl, que accede a los tres niveles y los pinta en pantalla utilizando la biblioteca OpenGL.
+
+Las demás interfaces corresponden al punto de entrada para dibujar el fotograma actual, y la llamada al gestor de recursos cuando es necesario cargar alguna entidad.
+
+d9: Ahora nos centraremos en las diferentes partes del motor gráfico. El nivel de geometría trata de las entidades de bajo nivel. En los videojuegos que usan gráficos 3D casi siempre se usa el modelo basado en polígonos. Cada objeto del videojuego está compuesto de una serie de superficies planas limitadas, (los polígonos), que son una aproximación visual al objeto que queremos representar. Sobre los polígonos se proyecta una imagen, llamada textura. En este caso, proyectando adecuadamente estas texturas sobre la malla de polígonos obtenemos este resultado, que es razonablemente convincente.
+
+d10:
+El nivel de objetos está basado en la idea de crear una escena del videojuego como si fuera un plató de televisión. Tenemos cámaras, iluminación y mallas de polígonos. Situaremos estas entidades en los lugares del espacio que nos interese. Para ello, cada uno de los objetos tiene una transformada, que nos permite describir su posición, orientación y tamaño. Cada objeto puede usar de referencia el origen de coordenadas u otro objeto. Esto nos sirve para que varios objetos se muevan simultáneamente. Hay muchos tipos de objetos, según diferentes clasificaciones. Hay dos tipos de cámara, en función de si se quiere mantener la perspectiva o no. También hay varios tipos de iluminación: hay luces puntuales; focos, que emiten su luz en una determinada dirección, y tenemos el sol, que representa un iluminador lejano. Y tenemos las mallas de polígonos, que nos sirven para representar objetos visibles.
+
+d11:
+El nivel de pantalla nos sirve para describir cómo y dónde queremos que se pinte una escena. Está basado en la idea de dibujar una escena como un pintor, aplicando capa tras capa de pintura al lienzo. En cada capa podremos añadir elementos o modificar los ya existentes.
+
+En este caso, primero aplicamos una capa de borrado, que nos deja el lienzo de color negro, preparado para dibujar. Después aplicamos una imagen de unas nubes, que nos proporciona un fondo. Y después aplicamos una capa 3d, que muestra el nivel de objetos visto desde una de sus cámaras. Por último, enviamos la imagen generada a una pantalla concreta, para que el jugador pueda ver el resultado.
+
+d12:
+Los subsistemas que hemos desarrollado hasta ahora nos sirven para describir un mundo virtual. Ahora entraremos en los mecanismos concretos que utilizaremos para representar esos mundos en pantalla. Como indicamos en los requisitos, queremos utilizar OpenGL, y queremos que el sistema de dibujado esté separado de las entidades. Así, para cada entidad del motor gráfico tenemos un dibujador en el motor OpenGL. Y ahora tenemos un problema: puesto que el motor gráfico y el motor OpenGL están separados, hay que volver a conectarlos de alguna manera. Para ello, hemos creado un patrón, llamado observador-dibujador.
+
+d13:
+El motor OpenGL tiene un funcionamiento descendente. A la hora de dibujar un objeto, el algoritmo general es el siguiente: 
+Primero, se busca el dibujador correspondiente a la entidad
+Después se llama al dibujador, que aplica el algoritmo adecuado. A menudo, ese algoritmo llamará a los dibujadores de entidades inferiores, hasta llegar a las más simples.
+
+En el típico fotograma, primero se llama al dibujador de la pantalla. Éste llama al dibujador de su escena, y el de la escena llama al de las capas, y así sucesivamente.
+
+Y hasta aquí la descripción del motor gráfico.
+
+d14:
+Ahora veremos el funcionamiento de la estructura básica de la lógica del juego. En la lógica del juego implementamos todas las reglas y comportamientos concretos de nuestro videojuego. Para este subsistema nos basamos en la idea de descomponer las reglas del juego en operaciones que funcionan simultáneamente.
+
+El modelo más parecido son los procesos en un sistema operativo. Cada proceso controla un aspecto de las reglas del juego. Podemos crear y destruir procesos en cualquier momento, según lo que requieran las reglas del juego. Los procesos se pueden comunicar unos con otros enviándose señales. Para hacer que todos los procesos se ejecuten al mismo ritmo, es necesario sincronizarlos. Ésto se hará una vez por fotograma. Por último, dentro de cada fotograma, nos interesa que unos procesos hagan sus cálculos antes que otros. Para ello, asignaremos diferentes prioridades a cada uno.
+
+d15:*
+El diseño del motor de procesos es relativamente sencillo. Esencialmente, he ordenado los procesos por prioridad, y he agrupado todas las prioridades dentro del sistema. Los procesos pueden cambiar de prioridad en cualquier momento, y no es necesario que una prioridad tenga procesos. En cada fotograma, el sistema llama a las prioridades en orden. A su vez, cada prioridad ejecuta una vez todos sus procesos asociados. Si alguno de los procesos es destruído, o cambia de prioridad, el resultado se hace efectivo al terminar el fotograma.
+
+d16:
+En un videojuego suele haber muchas entidades complejas, tales como las mallas, que están compuestas de polígonos, que a su vez están compuestos de vértices, y así sucesivamente. Para estas y otras entidades, se crea el gestor de recursos, cuya función es simplificar su carga y descarga desde ficheros en disco. Puesto que vamos a crear un nivel de abstracción, también le añadiremos cierta funcionalidad, para mejorarlo. En concreto, añadiremos la posibilidad de ejecutarlo en segundo plano, para que el juego no se detenga mientras se leen más recursos. Queremos que funcione como una biblioteca, asignando un nombre a cada recurso, para que nos ayude a organizarnos. Y queremos crear duplicados y entidades modificables, con el fin de poder modificar objetos sin perder el original.
+
+d17:
+Las tres entidades principales del gestor de recursos son el gestor, el instanciador y el cargador. El gestor contiene la organización como biblioteca, y reenvía las peticiones que recibe a su instanciador adecuado. El instanciador se encarga de crear un objeto utilizable a partir de los datos necesarios. La tarea del cargador es leer esos datos de disco. Así, las peticiones se reenvían de entidad en entidad hasta llegar a la adecuada. Hay un instanciador y un cargador para cada entidad diferente que requiera ser leída de disco.
+
+d18:
+Por último, entraremos en algo más concreto. Puesto que hemos desarrollado unas bibliotecas para construir videojuegos, el siguiente paso sería construir uno. Como no hemos construído todos los subsistemas necesarios, ahora tenemos ciertas limitaciones, y nuestra aplicación ni tendrá interactividad ni sonido. Teniendo en cuenta estas limitaciones, he decidido construir una demostración gráfica. En este caso, un planetario simplificado. El planetario mostrará en pantalla una representación del sistema solar; con el sol, los planetas y satélites principales, girando unos alrededor de otros.
+
+d19:*
+Para organizar adecuadamente el planetario tenemos que hacer un pequeño estudio de lo que queremos implementar. Para ello, nos centramos en las características de las entidades, y cómo las aplicamos a los sistemas que hemos construído. Tenemos unos objetos que giran alrededor del sol o de otros, y además giran alrededor de sí mismos. Usaremos el Motor Gráfico para mostrar los objetos en pantalla, y el motor de procesos para controlar cómo se mueven.
+
+Esta vista muestra los objetos generales y los correspondientes a la tierra y la luna. En él se aprecia cómo hemos usado el sistema de referencias del motor gráfico para organizar los objetos en un árbol. Puesto que el árbol tiene una única raíz, esa raíz será el objeto origen. De él dependen aquellos objetos que manipulamos libremente en la escena. Entre ellos, las órbitas de los planetas. Con esta organización, la órbita de la tierra depende del origen, y la de la luna depende de la posición de la órbita de la tierra. Así podemos aplicar la una a la otra adecuadamente.
+
+d20:
+Estando descrito el modelo de objetos, entramos a la descripción de los procesos que controlan los objetos. Con la separación en entidades elementales que hicimos antes, ahora nos podemos centrar en construir procesos genéricos que manipulen los objetos adecuadamente. En nuestro caso, para cada objeto que gire alrededor de un centro de gravedad, tenemos esta estructura. La óbita muestra el punto concreto en un instante de un giro alrededor de un centro de gravedad, y está controlado por un proceso. En ese mismo lugar situamos el planeta o satélite, cuya rotación alrededor de sí mismo está controlada por otro proceso.
+
+d21:
+La mayoría de los procesos funcionarán siguiendo este bucle: en cada fotograma se incrementa la variable local tiempo. A partir del tiempo, el proceso calcula la nueva posición de la órbita, o el nuevo ángulo de rotación. Por último, se aplican estos nuevos valores a los objetos.
+
+Habrá cuatro tipos de procesos: El manejador de órbitas se encarga de simular el giro de un objeto alrededor de otro. El controlador de rotación simula la rotación de un objeto alrededor de sí mismo. El manejador de la cámara manipulará la posición de la cámara, moviéndola suavemente por el planetario. Y el proceso inicial prepara todos los demás y crea todas las entidades necesarias.
+
+El resultado de todo el desarrollo es el siguiente: (mostrar planetario)
+
+d22:
+Conclusiones.
+Llegado a este punto y mirando hacia atrás vemos que hemos cumplido los requisitos. Hemos desarrollado un motor gráfico útil y que usa OpenGL. Hemos desarrollado un mecanismo adecuado para implementar la lógica del juego. He desarrollado un subsistema adecuado para gestionar la carga y descarga de recursos. Además, hemos construido un ejemplo de aplicación, que nos ha servido para completar el modelo arquitectónico.
+
+d23:
+Pero no todo ha sido fácil. En mi empeño de usar herramientas libres durante el desarrollo he encontrado varios problemas. Los mecanismos para llamar a las bibliotecas OpenGL y SDL están mal documentados y han causado ciertos dolores de cabeza. Por otra parte, no hay herramientas completas libres para dibujar diagramas UML. Al final he terminado usando el modelador Rhapsody, ofrecido gratuitamente por IBM. Para escribir la documentación he utilizado Latex. El resultado es bueno, pero la cantidad de problemas e inconvenientes encontrados en el camino han sido demasiado grandes.
+
+d24:
+El sistema desarrollado no es perfecto, y tiene muchos puntos en los que se puede mejorar. No sería mal comienzo desarrollar los demás sistemas que faltan. En especial, sería importante añadir un mecanismo para procesar adecuadamente las acciones del jugador y enviarlas correctamente a la lógica del juego. Y, aunque no es extrictamente necesario, no vendría mal un sistema para emitir efectos de sonido y música. 
+
+El motor gráfico es potente, pero podría serlo más. Nos interesa añadir más tipos de geometría, con bsps u octrees. Y no vendría mal aprovechar la capacidad de reprogramación de los gráficos que nos ofrecen los shaders.
+
+Por último, el motor de procesos ya está organizado con cierta paralelización, y no estaría mal derivarlo a un sistema multiprocesador, para aprovechar que los nuevos ordenadores tienen muchos cores.
+
+d25:
+Y con esto doy por concluida la presentación, y me pongo a su disposición para las preguntas y aclaraciones que consideren adecuadas.

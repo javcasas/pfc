@@ -1,0 +1,425 @@
+%\subsubsection{Relaciones}
+%\begin{itemize}
+%\end{itemize}
+%\subsubsection{Atributos}
+%\begin{itemize}
+%\end{itemize}
+%\subsubsection{Métodos}
+%\begin{itemize}
+%\item +inicializador \newline
+%\end{itemize}
+%\subsubsection{Parámetros de instanciación}
+%\begin{itemize}
+%\end{itemize}
+
+\chapter{Subsistema Objetos}
+\section{Posicionamiento espacial}
+\subsection{posicion}
+\subsubsection{Atributos}
+\begin{itemize}
+\item coordenadas : vector3 \newline
+La coordenada especificada como un vector. Inicialmente vale (0,0,0).
+\end{itemize}
+\subsubsection{Métodos}
+\begin{itemize}
+\item +coordenadas : vector3 \newline
+Getter.
+\item +establecer\_coordenadas (c:vector3) \newline
+Setter.
+\item +mover (d:vector3) \newline
+Desplaza la coordenada el valor indicado.
+\end{itemize}
+
+\subsection{orientacion}
+\subsubsection{Atributos}
+\begin{itemize}
+\item cuaternio : cuaternion \newline
+Almacena las rotaciones. Inicialmente vale como una rotación alrededor de (1,0,0) de ángulo 0.
+\end{itemize}
+\subsubsection{Métodos}
+\begin{itemize}
+\item +cuaternio : cuaternion \newline
+Getter.
+\item +extrae\_rotacion : (vector * float) \newline
+Devuelve la orientación como un par de un vector alrededor del que rotar y el ángulo rotado en radianes.
+\item +rotar (v:vector3) (ang:float) \newline
+Gira el sistema alrededor del vector especificado el ángulo especificado (en radianes).
+\item +establecer\_rotacion (v:vector3) (ang:float) \newline
+Setter. El ángulo es en radianes.
+\item +rota\_vector (v:vector3) : vector3 \newline
+Aplica el vector especificado a la orientación, y devuelve el resultado.
+\item +frontal : vector3 \newline
+Rota el vector (0,0,1).
+\item +vertical : vector3 \newline
+Rota el vector (0,1,0).
+\end{itemize}
+
+\subsection{escala}
+\subsubsection{Atributos}
+\begin{itemize}
+\item escala : vector3 \newline
+Almacena la escala como un vector. El valor inicial es (1,1,1), es decir, ningún cambio (multiplica las tres dimensiones por 1).
+\end{itemize}
+\subsubsection{Métodos}
+\begin{itemize}
+\item +escala : vector3\newline
+Getter.
+\item +escalar (d:vector3) \newline
+Multiplica cada componente de su escala por el correspondiente del vector especificado.
+\item +establecer\_escala (d:vector3) \newline
+Setter.
+\end{itemize}
+
+\subsection{transformada}
+\subsubsection{Relaciones}
+\begin{itemize}
+\item Depende de \Clase{posicion}, \Clase{orientacion} y \Clase{escala}.
+\end{itemize}
+\subsubsection{Atributos}
+\begin{itemize}
+\item posicion : posicion \newline
+El desplazamiento que representa la transformada.
+\item orientacion : orientacion \newline
+La rotación que representa la transformada.
+\item escala : escala \newline
+El cambio de dimensión que representa la transformada.
+\end{itemize}
+\subsubsection{Métodos}
+\begin{itemize}
+\item +posicion : posicion
+\item +orientacion : orientacion
+\item +escala : escala \newline
+Getters.
+\item +mover (d:vector3)
+\item +establecer\_posicion (d:vector3)
+\item +coordenadas : vector3 \newline
+Envoltorio para posicion.
+\item +escalar (d:vector3)
+\item +establecer\_escala (d:vector3)
+\item +coordenadas : vector3\newline
+Envoltorio para escala.
+\item +rotar (v:vector3) (ang:float)
+\item +establecer\_rotacion (v:vector3) (ang:float)
+\item +extrae\_rotacion : (vector3 * float) \newline
+Envoltorio para orientación.
+\item +a\_matriz : matriz \newline
+Devuelve la transformada como una matriz. Siendo T la matriz de translación, R la de orientación y S la de escala, devuelve TRS.
+\end{itemize}
+
+\section{Tipos de uso general}
+\subsection{objeto}
+\subsubsection{Relaciones}
+\begin{itemize}
+\item Es una especificación de \Clase{sujeto}, es decir, es el sujeto de un patrón observador.
+\item Depende de \Clase{transformada}.
+\end{itemize}
+\subsubsection{Atributos}
+\begin{itemize}
+\item transformada : transformada \newline
+La transformada que se aplica al objeto.
+\item padre : objeto option \newline
+El objeto ascendiente de este objeto en el árbol de objetos.
+\item hijos : objeto list \newline
+Los objetos descendientes de este objeto en el árbol de objetos.
+\end{itemize}
+\subsubsection{Métodos}
+\begin{itemize}
+\item +transformada : transformada
+\item +padre : objeto
+\item +hijos : objeto list \newline
+Getters.
+\item +set\_transformada (nt:transformada)
+\item +establecer\_padre (x:objeto) \newline
+Setters.
+\item +añadir\_hijo (x:objeto) \newline
+Añade el objeto especificado a la lista de hijos.
+\item +quitar\_hijo (x:objeto) \newline
+Quita el objeto especificado de la lista de hijos.
+\item +emparentar (p:objeto) \newline
+Cambia su padre por el objeto especificado.
+\item +origen : objeto \newline
+Devuelve el objeto origen, raíz del árbol de objetos.
+\item +matriz\_transformada\_final : matriz\newline
+Computa la transformada de este objeto en coordenadas globales, fruto de la concatenación de la transforamda de todos sus ancestros junto a la suya, y la devuelve como matriz.
+\item +transformada\_final : transformada \newline
+Devuelve la transformada de este objeto en coordenadas globales. Debido a que en la transformada tan sólo tenemos posición, orientación y escala, es posible que parte de la información no sea incluída en la transformada final (la parte correspondiente a desviaciones de caras o \emph{shear}).
+\end{itemize}
+
+\subsection{c\_objeto\_origen}
+\subsubsection{Relaciones}
+\begin{itemize}
+\item Es una especificación de \Clase{objeto}
+\end{itemize}
+\subsubsection{Métodos}
+\begin{itemize}
+\item +padre : objeto\newline
+Falla, porque los objetos origen no pueden tener padre.
+\item +establecer\_padre \newline
+Falla, porque los objetos origen no pueden tener padre.
+\item +origen : objeto \newline
+Se devuelve a sí mismo como objeto.
+\item +matriz\_transformada\_final : matriz \newline
+Devuelve la matriz I.
+\end{itemize}
+
+\subsection{objeto\_origen}
+\subsubsection{Relaciones}
+\begin{itemize}
+\item Es una especificación de \Clase{c\_objeto\_origen}.
+\end{itemize}
+\subsubsection{Métodos}
+\begin{itemize}
+\item +inicializador \newline
+Se agrega a sí mismo al contador Objetos.contador\_objeto\_origen.
+\end{itemize}
+
+\subsection{c\_dummy}
+\subsubsection{Relaciones}
+\begin{itemize}
+\item Es una especificación de \Clase{objeto}.
+\end{itemize}
+
+\subsection{dummy}
+\subsubsection{Relaciones}
+\begin{itemize}
+\item Es una especificación de \Clase{c\_dummy}.
+\end{itemize}
+\subsubsection{Métodos}
+\begin{itemize}
+\item +inicializador \newline
+Se agrega a sí mismo al contador Objetos.contador\_dummy.
+\end{itemize}
+
+\section{Luces}
+\subsection{luz}
+\subsubsection{Relaciones}
+\begin{itemize}
+\item Es una especificación de \Clase{objeto}.
+\item Depende de \Clase{Geo.color\_simple}.
+\end{itemize}
+\subsubsection{Atributos}
+\begin{itemize}
+\item c\_ambiente : Geo.color\_simple \newline
+La componente de color ambiente emitida por la luz. Su valor por defecto es RGBA(0,0,0,1).
+\item c\_difuso : Geo.color\_simple \newline
+La componente de color difuso emitida por la luz. Su valor por defecto es RGBA(1,1,1,1).
+\item c\_especular : Geo.color\_simple \newline
+La componente de color especular emitida por la luz. Su valor por defecto es RGBA(1,1,1,1).
+\item at\_constante : float \newline
+La atenuación constante que tiene la luz. Su valor por defecto es 1.
+\end{itemize}
+\subsubsection{Métodos}
+\begin{itemize}
+\item +c\_ambiente : Geo.color\_simple
+\item +c\_difuso : Geo.color\_simple
+\item +c\_especular : Geo.color\_simple
+\item +at\_constante : float \newline
+Getters.
+\item +set\_c\_ambiente (c:Geo.color\_simple)
+\item +set\_c\_difuso (c:Geo.color\_simple)
+\item +set\_c\_especular (c:Geo.color\_simple)
+\item +set\_at\_constante (a:float)\newline
+Setters.
+\end{itemize}
+
+\subsection{luz\_puntual}
+\subsubsection{Relaciones}
+\begin{itemize}
+\item Es una especificación de \Clase{luz}.
+\end{itemize}
+\subsubsection{Atributos}
+\begin{itemize}
+\item at\_lineal : float \newline
+La atenuación lineal de la luz.
+\item at\_cuadratica : float \newline
+La atenuación cuadrática de la luz.
+\end{itemize}
+\subsubsection{Métodos}
+\begin{itemize}
+\item +at\_lineal
+\item +at\_cuadratica\newline
+Getters.
+\item +set\_at\_lineal
+\item +set\_at\_cuadratica\newline
+Setters.
+\end{itemize}
+
+\subsection{c\_punto\_luz}
+\subsubsection{Relaciones}
+\begin{itemize}
+\item Es una especificación de \Clase{luz\_puntual}.
+\end{itemize}
+
+\subsection{punto\_luz}
+\subsubsection{Relaciones}
+\begin{itemize}
+\item Es una especificación de \Clase{c\_punto\_luz}.
+\end{itemize}
+\subsubsection{Métodos}
+\begin{itemize}
+\item +inicializador \newline
+Se agrega a sí mismo al contador Objetos.contador\_punto\_luz.
+\end{itemize}
+
+\subsection{c\_foco}
+\subsubsection{Relaciones}
+\begin{itemize}
+\item Es una especificación de \Clase{luz\_puntual}.
+\end{itemize}
+\subsubsection{Atributos}
+\begin{itemize}
+\item apertura : float \newline
+El ángulo de apertura del foco de luz. Puede valer [0..$\frac\pi{2}$].
+\item concentracion : float \newline
+La concentración de luz alrededor del centro del cono de luz. Puede valer [0..100]. 0 significa que la luz es uniforme, mientras que 100 significa que la luz está fuertemente concentrada en el centro.
+\end{itemize}
+\subsubsection{Métodos}
+\begin{itemize}
+\item +apertura : float
+\item +concentracion : float \newline
+Getters.
+\item +set\_apertura (a:float)
+\item +set\_concentracion (c:float) \newline
+Setters.
+\end{itemize}
+
+
+\subsection{foco}
+\subsubsection{Relaciones}
+\begin{itemize}
+\item Es una especificación de \Clase{c\_foco}.
+\end{itemize}
+\subsubsection{Métodos}
+\begin{itemize}
+\item +inicializador \newline
+Se agrega a sí mismo al contador Objetos.contador\_foco.
+\end{itemize}
+
+\subsection{c\_sol}
+\subsubsection{Relaciones}
+\begin{itemize}
+\item Es una especificación de \Clase{luz}.
+\end{itemize}
+
+\subsection{sol}
+\subsubsection{Relaciones}
+\begin{itemize}
+\item Es una especificación de \Clase{c\_sol}.
+\end{itemize}
+\subsubsection{Métodos}
+\begin{itemize}
+\item +inicializador \newline
+Se agrega a sí mismo a Objetos.contador\_foco.
+\end{itemize}
+
+\section{Cámaras}
+\subsection{camara}
+\subsubsection{Relaciones}
+\begin{itemize}
+\item Es una especificación de \Clase{objeto}.
+\end{itemize}
+\subsubsection{Atributos}
+\begin{itemize}
+\item plano\_cercano : float
+\item plano\_lejano : float \newline
+La distancia hasta los planos de corte. Todo lo que esté más cerca de la cámara que el plano cercano y todo lo que esté más lejos de la cámara que el plano lejano no será dibujado en pantalla. Por defecto plano\_cercano vale 0.5 y plano\_lejano vale 100.
+\end{itemize}
+\subsubsection{Métodos}
+\begin{itemize}
+\item +planos\_corte : (float * float) \newline
+Getter. Los datos devueltos son (plano\_cercano, plano\_lejano).
+\item +set\_planos\_corte (c:float, l:float) \newline
+Setter. El formato del parámetro es (plano\_cercano, plano\_lejano).
+\end{itemize}
+
+\subsection{c\_camara\_perspectiva}
+\subsubsection{Relaciones}
+\begin{itemize}
+\item Es una especificación de \Clase{camara}.
+\end{itemize}
+\subsubsection{Atributos}
+\begin{itemize}
+\item focal\_x : float
+\item focal\_y : float \newline
+La focal determina el ángulo de apertura de la cámara, en grados por píxel. Por defecto vale focal\_x y focal\_y 0.075, que determina un campo de visión de 45º en el eje vertical y 60º en el eje horizontal.
+\end{itemize}
+\subsubsection{Métodos}
+\begin{itemize}
+\item +focal : (float * float) \newline
+Getter. El formato de los datos devueltos es (focal\_x, focal\_y).
+\item +set\_focal : (x:float, y:float) \newline
+Setter.
+\end{itemize}
+
+\subsection{camara\_perspectiva}
+\subsubsection{Relaciones}
+\begin{itemize}
+\item Es una especificación de \Clase{c\_camara\_perspectiva}.
+\end{itemize}
+\subsubsection{Métodos}
+\begin{itemize}
+\item +inicializador \newline
+Se agrega a sí mismo al contador Objetos.contador\_camara\_perspectiva.
+\end{itemize}
+
+\subsection{c\_camara\_ortografica}
+\subsubsection{Relaciones}
+\begin{itemize}
+\item Es una especificación de \Clase{camara}.
+\end{itemize}
+\subsubsection{Atributos}
+\begin{itemize}
+\item ancho : float
+\item alto : float \newline
+El ancho y alto de la pantalla.
+\end{itemize}
+\subsubsection{Métodos}
+\begin{itemize}
+\item +volumen : (float * float) \newline
+Getter. El valor devuelto tiene el formato (ancho, alto).
+\item +set\_volumen (x:float, y:float) \newline
+Setter.
+\end{itemize}
+
+\subsection{camara\_ortografica}
+\subsubsection{Relaciones}
+\begin{itemize}
+\item Es una especificación de \Clase{c\_camara\_ortografica}.
+\end{itemize}
+\subsubsection{Métodos}
+\begin{itemize}
+\item +inicializador \newline
+Se asocia a sí mismo al contador Objetos.contador\_camara\_ortografica.
+\end{itemize}
+
+\section{Geometría}
+\subsection{c\_objeto\_malla}
+\subsubsection{Relaciones}
+\begin{itemize}
+\item Es una especificación de \Clase{objeto}.
+\item Depende de \Clase{Geo.malla}.
+\end{itemize}
+\subsubsection{Atributos}
+\begin{itemize}
+\item malla : Geo.malla option \newline
+Almacena la malla asociada a este objeto.
+\end{itemize}
+\subsubsection{Métodos}
+\begin{itemize}
+\item +malla : Geo.malla \newline
+Devuelve la malla asociada al objeto. Falla si no hay ninguna.
+\item +set\_malla (m:Geo.malla) \newline
+Asigna o cambia la malla.
+\end{itemize}
+
+\subsection{objeto\_malla}
+\subsubsection{Relaciones}
+\begin{itemize}
+\item Es una especificación de \Clase{c\_objeto\_malla}.
+\end{itemize}
+\subsubsection{Métodos}
+\begin{itemize}
+\item +inicializador \newline
+Se asocia al contador Objetos.contador\_objeto\_malla.
+\end{itemize}
+

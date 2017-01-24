@@ -1,0 +1,21 @@
+\chapter{Introducción}
+Hasta ahora se ha especificado en general cómo debe ser la forma y el comportamiento de las clases y del sistema. En este punto se discutirá al detalle cómo debe ser implementado el sistema. Por ello, hasta este punto se ha estado hablando en términos abstractos, en el cómo debería funcionar. En este punto se especificarán los mecanismos y detalles concretos que llevará la implementación.
+
+\section{Restricciones y conversiones}
+Para implementar este proyecto se utilizará el lenguaje OCaML, que al igual que cualquier otro lenguaje de programación tiene sus particularidades. Por ello, a continuación se especifica una pequeña guía para transformar los modelos de análisis y diseño a este lenguaje.
+
+\begin{itemize}
+\item \textbf{Tipos de dato}
+	\begin{itemize}
+	\item Void o vacío, el tipo de dato que especifica que no se pasa nada de parámetro o no se devuelve nada, pasa a llamarse \emph{unit}.
+	\item Conjunto ordenado, el tipo de dato que especifica una relación con varias unidades siguiendo un determinado orden, pasa a ser \emph{array} o \emph{list}, dependiendo si es necesario el acceso rápido a un elemento concreto o la capacidad de recorrer todos los elementos en orden.
+	\item Conjunto, el tipo de dato que especifica una relación con varias unidades, pasa a llamarse \emph{list}, por la facilidad de añadir o filtrar elementos.
+	\item Vector, Vector4, Vector3 y Vector2 son la misma clase con distintos nombres. La única diferencia reside en que si a Vector4, Vector3 o Vector2 se le pasa una cantidad de parámetros distinto al número de la clase, se quejan y fallan con una excepción. Esto se hace con el fin de favorecer los controles de precondición y postcondición.
+	\end{itemize}
+\item \textbf{Operaciones del lenguaje}
+	\begin{itemize}
+	\item OCaML es un lenguaje fuertemente tipado, con inferencia de tipos. Debido a estas características, no es posible hacer \emph{downcasting}, es decir, transformar una referencia a una clase en una referencia a una de sus subclases. Esto se considera una operación peligrosa y ambigua, y esa es la razón de que el lenguaje se niegue a implementarla.
+	\item Debido a que el \emph{downcasting} es imposible, el \emph{upcasting} es una operación de una sóla dirección, y no se puede invertir. Hay que crear caminos alternativos donde el \emph{downcasting} sería necesario.
+	\item OCaML pone muchas trabas a la hora de crear dependencias circulares. Esto ha favorecido la creación de un modelo de análisis y diseño libre de dependencias circulares.
+	\end{itemize}
+\end{itemize}

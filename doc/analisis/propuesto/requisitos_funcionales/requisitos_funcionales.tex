@@ -1,0 +1,112 @@
+\chapter{Requisitos funcionales}
+\section{Introducción}
+En este capítulo se describirá la funcionalidad de alto nivel del sistema.
+\section{Requisitos del sistema en conjunto}
+\begin{itemize}
+\Requisito{1}{El sistema proporcionará una ayuda al desarrollo de videojuegos.}{Imprescindible}{}
+\Requisito{2}{El sistema proporcionará un subsistema gráfico listo para ser utilizado.}{Imprescindible}{}
+\Requisito{3}{El sistema proporcionará un subsistema de sonido listo para ser utilizado. En esta revisión no se incluye el desarrollo de dicho sistema.}{No implementado en esta revisión.}{}
+\Requisito{4}{El sistema proporcionará un subsistema de entrada listo para ser utilizado. En esta revisión no se incluye el desarrollo de dicho sistema.}{No implementado en esta revisión.}{}
+\Requisito{5}{El sistema proporcionará un esqueleto para facilitar la implementación de la lógica del juego.}{Imprescindible}{}
+\Requisito{6}{El sistema proporcionará el esqueleto típico de las aplicaciones interactivas.}{Imprescindible}{}
+\end{itemize}
+
+\section{Requisitos del subsistema gráfico}
+En esta sección nos referiremos al subsistema gráfico como sistema gráfico o motor gráfico, para abreviar.
+
+\begin{itemize}
+\Requisito{2.1}{El motor gráfico estará orientado a las 3 dimensiones del espacio.}{Imprescindible}{}
+\Requisito{2.2}{El motor gráfico estará organizado en torno al uso de polígonos como su estructura básica de representación.}{Imprescindible}{}
+	\begin{itemize}
+	\Requisito{2.2.1}{Los polígonos soportarán texturizado e iluminación.}{Imprescindible}{}
+	\Requisito{2.2.2}{El sistema proveerá un mecanismo para la importación y carga de grandes grupos de polígonos (mallas).}{Imprescindible}{}
+	\Requisito{2.2.3}{El motor gráfico proveerá de una estructura básica para el manejo y procesamiento de mallas de polígonos.}{Imprescindible}{}
+	\end{itemize}
+\Requisito{2.3}{El motor gráfico deberá ser fácilmente desacoplable de la biblioteca gráfica que se utilice.}{Imprescindible}{}
+	\begin{itemize}
+	\Requisito{2.3.1}{Inicialmente se utilizará la biblioteca gráfica OpenGL.}{Imprescindible}{}
+	\end{itemize}
+\Requisito{2.4}{El motor gráfico tendrá disponibles entidades de alto nivel para su utilización.}{Imprescindible}{}
+	\begin{itemize}
+	\Requisito{2.4.1}{Una entidad de alto nivel será el objeto. Los objetos permitirán manipular elementos de la escena como son cámaras y luces de una manera sencilla.}{Imprescindible}{}
+	\Requisito{2.4.2}{Otra entidad de alto nivel será la pantalla. Las escenas agrupan objetos y se pintan en la pantalla, para que el jugador pueda verlas.}{Imprescindible}{}
+	\end{itemize}
+\Requisito{2.5}{El motor gráfico estará orientado a representar gráficos en tiempo real en la pantalla.}{Imprescindible}{}
+\end{itemize}
+
+%\section{Requisitos del subsistema de sonido}
+
+
+%\section{Requisitos del subsistema de entrada}
+%\begin{itemize}
+%\Requisito{4.1}{El sistema proporcionará un mecanismo para utilizar los dispositivos de entrada.}{Imprescindible}{}
+%\Requisito{4.2}{El sistema simplificará la utilización de los dispositivos de entrada.}{Imprescindible}{}
+%	\begin{itemize}
+%	\Requisito{4.2.1}{Existirá un tipo de dispositivo llamado binario, que en un determinado momento estará o activado o desactivado.}{Imprescindible}{}
+%	\Requisito{4.2.2}{Existirá un tipo de dispositivo llamado lineal, que en un determinado momento valdrá un valor en un intervalo.}{Imprescindible}{}
+%	\Requisito{4.2.3}{Existirá un tipo de dispositivo llamado compuesto, y que será un agregado de otros dispositivos.}{Impresicindible}{}
+%	\Requisito{4.2.4}{El sistema organizará los dispositivos de entrada disponibles según el esquema indicado anteriormente de dispositivos binarios, lineales y compuestos.}{Imprescindible}{}
+%	\end{itemize}
+%\end{itemize}
+
+
+\section{Requisitos del esqueleto para la implementación de la lógica del juego}
+\begin{itemize}
+\Requisito{5.1}{El sistema proporcionará un mecanismo para crear y procesar entidades concurrentes dentro del juego.}{Imprescindible}{}
+\Requisito{5.2}{El sistema proporcionará un mecanismo para el control eficiente y adecuado del tiempo dentro del juego.}{Alta}{}
+\end{itemize}
+
+\section{Requisitos del esqueleto de aplicación interactiva}
+\begin{itemize}
+\Requisito{6.1}{El sistema proporcionará un bucle principal.}{Imprescindible}{}
+\Requisito{6.2}{El sistema estará estructurado según el modelo de bucle principal típico de aplicación interactiva: 
+	\begin{enumerate}
+	\item Leer entrada
+	\item Procesar información
+	\item Representar resultados
+	\item Ir a 1
+	\end{enumerate} \ }{Imprescindible}{}
+	
+\end{itemize}
+
+%\section{Requisitos del subsistema de entrada}
+%A continuación se enumeran los requisitos que tiene el sistema para aceptar entradas del jugador.
+%\begin{enumerate}
+%\item \ReqImprescindible{Interfaz de entrada}{El sistema debe proveer un subsistema capaz de leer entradas desde distinto hardware}{Ninguna}
+%\item \ReqImprescindible{Teclado}{El sistema debe poder leer pulsaciones de teclas en el teclado en la forma ``pulsar tecla'' y ``soltar tecla'', con las limitaciones impuestas por el hardware}{Interfaz de entrada}
+%\item \ReqImprescindible{Ratón}{El sistema debe poder leer información disponible de uno o varios ratones o dispositivos equivalentes (trackball) en la forma ``pulsar botón'', ``soltar botón'', ``desplazamiento del ratón'' y posiblemente ``lectura de ejes alternativos'' en el caso de que el ratón disponga de ruletas u otros dispositivos}{Interfaz de entrada}
+%\item \ReqImprescindible{Joypad}{El sistema debe poder leer información disponible de mandos de juegos en la forma ``posición de la palanca/cruceta'', ``pulsar botón'', ``soltar botón'' y ``posición de ejes alternativos''}{Interfaz de entrada}
+%\item \ReqAlta{Otros dispositivos}{El sistema debe proveer mecanismos para la extensión y el soporte de nuevos mandos de entrada que aparezcan}{Intefaz de entrada}
+%\item \ReqAlta{Unificación del acceso}{El acceso a la información proveída por los dispositivos debe ser lo más uniforme posible}{Ninguna}
+%\item \ReqAlta{Demoras en el acceso}{El sistema debe implementar los mecanismos de acceso al hardware de entrada de una manera tal que la información se transfiera desde el hardware hasta la lógica del juego con un retardo mínimo}{Ninguna}
+%\item \ReqAlta{Binding}{El enlace de datos entre el hardware y la lógica del juego debe ser configurable en tiempo de ejecución, con el fin garantizar la posibilidad de reconfigurar los controles en cualquier momento}{Ninguno}
+%\end{enumerate}
+
+%\section{Requisitos del subsistema de sonido}
+%A continuación se enumeran los requisitos dedicados a la parte sonora del sistema.
+%
+%\begin{enumerate}
+%\item \ReqImprescindible{Sistema de sonido}{El sistema debe proveer un subsistema que pueda manejar y enviar sonidos a la tarjeta de sonido del sistema}{Ninguna}
+%\end{enumerate}
+
+%Con el fin de clasificar mejor estos requisitos se han agrupado en dos grupos: efectos de sonido y música.
+
+%\subsection{Efectos de sonido}
+%\begin{enumerate}
+%\item \ReqImprescindible{Efectos de sonido}{El sistema debe proveer un mecanismo para reproducir sonidos}{Sistema de sonido}
+%\item \ReqImprescindible{Reproducción múltiple}{Los efectos de sonido se podrán comenzar a reproducir a petición de la lógica del juego en cualquier momento, pudiendo superponerse unos a otros}{Efectos de sonido}
+%\item \ReqImprescindible{Control de volumen}{Debe proveerse un mecanismo que permita controlar el volumen de reproducción de un determinado efecto de sonido, con independencia de los demás efectos de sonido (incluídas copias de él mismo)}{Efectos de sonido}
+%\item \ReqMedia{Velocidad de reproducción}{Debe existir un mecanismo que permita controlar la velocidad de reproducción de un efecto de sonido, con independencia de los demás efectos de sonido (incluídas copias de él mismo)}{Efectos de sonido}
+%\item \ReqAlta{Estéreo o cuadrafónico}{Debe haber un mecanismo que permita posicionar un sonido en el espacio con el fin de que suene adecuadamente en sistemas de altavoces en estéreo o cuadrafónicos}{Efectos de sonido}
+%\item \ReqAlta{Formatos estándar}{El sistema debe soportar la carga de efectos de sonido en la forma de sonidos con formato estándar}{Efectos de sonido}
+%\end{enumerate}
+
+%\subsection{Música}
+%\begin{enumerate}
+%\item \ReqImprescindible{Música}{El sistema debe proveer un mecanismo para reproducir música}{Sistema de sonido}
+%\item \ReqImprescindible{Control de reproducción}{El sistema de música debe proveer un mecanismo para poder avanzar, parar, pausar, controlar el volumen o reproducir música, siguiendo los conceptos que esto representaría en un reproductor de CD}{Música}
+%\item \ReqMedia{Reproducción múltiple}{El sistema debe poder reproducir varias músicas simultáneamente, y controlar cada una por separado de la manera que en el requisito \emph{Control de reproducción} se especifica }{Música}
+%\item \ReqAlta{Carga diferida}{Debido a que el sistema no puede almacenar en memoria RAM gran cantidad de música descomprimida, debe existir un mecanismo que cargue la música en tiempo real de disco, a medida que se necesite}{Música}
+%\item \ReqAlta{Formatos estándar}{El sistema debe soportar la carga de música desde formatos estándar. Recomendados: MPEG Audio Layer-3 (MP3) y Ogg Vorbis (OGG)}{Música}
+%\end{enumerate}
+

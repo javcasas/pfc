@@ -1,0 +1,25 @@
+\chapter{Patrón Observador-Dibujador}
+\section{Introducción}
+El patrón Observador-Dibujador define una dependencia entre un objeto conceptual y una forma o varias de dibujar dicho objeto, de tal manera que el mecanismo de dibujado del objeto esté desacoplado del objeto, y pueda cambiar sin que el objeto tenga que enterarse.
+\subsection{Motivo}
+El patrón Observador-Dibujador tiene dos partes que son el Objeto y el Dibujador. Uniendo estas dos partes hay una maraña de clases que añaden funcionalidad para poder cambiar el Dibujador dinámicamente.
+
+Un ejemplo de uso de este patrón es en el mecanismo de dibujado de una malla poligonal en pantalla, de tal manera que queda separado el modelo conceptual de malla del mecanismo que se utiliza para dibujar dicha malla en pantalla.
+\subsection{Aplicabilidad}
+Se puede usar el patrón Observador-Dibujador en las siguientes situaciones:
+\begin{itemize}
+\item Cuando en un patrón observador el sujeto desconoce cómo debe ser tratado, o si su manera de ser tratado cambiará en cualquier momento.
+\end{itemize}
+\subsection{Consecuencias}
+\begin{itemize}
+\item La fuerte separación entre el sujeto y el observador-dibujador garantiza que es fácil reaprovechar el sujeto.
+\item Es sencillo cambiar radicalmente de mecanismo de dibujado cambiando dinámicamente el observador-dibujador.
+\end{itemize}
+\subsection{Usos conocidos}
+\subsection{Patrones relacionados}
+\section{Estructura de clases}
+\subsection{Colaboraciones}
+\subsection{Detalles de implementación}
+\section{Descripción de las clases}
+\section{Ejemplo de uso}
+\section{Referencias}

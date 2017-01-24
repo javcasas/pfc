@@ -1,0 +1,38 @@
+logica.cmo: gfx/render.cmo general/registro.cmo general/procesos.cmo \
+    gfx/objetos.cmo general/mat.cmo gfx/geo.cmo general/ficheros.cmo \
+    gfx/cargador_malla.cmo gfx/bitmaps.cmo 
+logica.cmx: gfx/render.cmx general/registro.cmx general/procesos.cmx \
+    gfx/objetos.cmx general/mat.cmx gfx/geo.cmx general/ficheros.cmx \
+    gfx/cargador_malla.cmx gfx/bitmaps.cmx 
+main.cmo: general/vista.cmo general/procesos.cmo logica.cmo 
+main.cmx: general/vista.cmx general/procesos.cmx logica.cmx 
+general/test.cmo: general/mat.cmo 
+general/test.cmx: general/mat.cmx 
+gfx/bitmaps.cmo: general/recursos.cmo general/mat.cmo gfx/geo.cmo \
+    general/general.cmo 
+gfx/bitmaps.cmx: general/recursos.cmx general/mat.cmx gfx/geo.cmx \
+    general/general.cmx 
+gfx/cargador_malla.cmo: gfx/geo.cmo general/ficheros.cmo \
+    gfx/cargador_malla_parser.cmo 
+gfx/cargador_malla.cmx: gfx/geo.cmx general/ficheros.cmx \
+    gfx/cargador_malla_parser.cmx 
+gfx/cargador_malla_parser.cmo: general/recursos.cmo general/mat.cmo \
+    gfx/geo.cmo gfx/bitmaps.cmo 
+gfx/cargador_malla_parser.cmx: general/recursos.cmx general/mat.cmx \
+    gfx/geo.cmx gfx/bitmaps.cmx 
+gfx/geo.cmo: general/mat.cmo general/general.cmo general/ficheros.cmo 
+gfx/geo.cmx: general/mat.cmx general/general.cmx general/ficheros.cmx 
+gfx/objetos.cmo: general/mat.cmo gfx/geo.cmo general/general.cmo 
+gfx/objetos.cmx: general/mat.cmx gfx/geo.cmx general/general.cmx 
+gfx/render.cmo: gfx/objetos.cmo general/mat.cmo gfx/geo.cmo \
+    general/general.cmo 
+gfx/render.cmx: gfx/objetos.cmx general/mat.cmx gfx/geo.cmx \
+    general/general.cmx 
+gfx/tga.cmo: general/recursos.cmo gfx/geo.cmo general/ficheros.cmo 
+gfx/tga.cmx: general/recursos.cmx gfx/geo.cmx general/ficheros.cmx 
+opengl/m_opengl.cmo: general/vista.cmo gfx/render.cmo general/registro.cmo \
+    gfx/objetos.cmo general/mat.cmo gfx/geo.cmo general/general.cmo \
+    gfx/bitmaps.cmo 
+opengl/m_opengl.cmx: general/vista.cmx gfx/render.cmx general/registro.cmx \
+    gfx/objetos.cmx general/mat.cmx gfx/geo.cmx general/general.cmx \
+    gfx/bitmaps.cmx 

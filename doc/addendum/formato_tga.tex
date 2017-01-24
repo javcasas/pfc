@@ -1,0 +1,140 @@
+\chapter{Formato de imagen TGA}
+El formato de imagen Truevision TGA soporta muchos tipos de imagen y datos extra de información. Sin embargo, muchos de esos tipos fueron pensados para las tarjetas gráficas de Truevision (Tarjetas TARGA); y, por ello, se ha optado por implementar un cargador que cargue los TGA más útiles. En este capítulo se especifica el subconjunto de TGAs que el sistema puede cargar, y el formato de dichos ficheros.
+
+
+\section{Formatos cargables}
+Se ha implementado la carga de los formatos de TGA más comunes. Estos son los formatos true-color de 15, 24 y 32 bits, con o sin compresión RLE.
+
+\subsection{Imágenes de 15 bits por píxel}
+Las imágenes de 15 bits por píxel soportan un total de 32768 colores distintos. Cada píxel está formado por 3 componentes: 5 bits de rojo, 5 bits de verde y 5 bits de azul. Se suele añadir 1 bit de máscara, aunque no siempre se utiliza. Estas imágenes ocupan 2 bytes por píxel más el tamaño de las cabeceras del fichero.
+
+\subsection{Imágenes de 24 bits por píxel}
+Las imágenes de 24 bits por pixel son el formato \emph{serio} que se utiliza hoy día para imágenes que van a ser proyectadas en la pantalla de un ordenador. Cada píxel está formado por 3 componentes: 8 bits de rojo, 8 bits de verde y 8 bits de azul. Esto proporciona un total de 16777216 (16 millones en el argot técnico) colores.  En las imágenes TGA de 24 bits por píxel, cada píxel ocupa 3 bytes.
+
+\subsection{Imágenes de 32 bits por píxel}
+Las imágenes de 32 bits por píxel son similares a las de 24 bits por píxel. La diferencia reside en que en las imágenes de 32 bits por píxel se suelen dedicar los 8 bits sobrantes a un canal alfa, es decir, a un indicador de transparencia. De esta manera tenemos 16 millones de colores y 256 niveles de transparencia para cada píxel. Éste es el formato que nos permite la mayor libertad a la hora de manejar imágenes sin utilizar formatos de píxel exóticos. Como contrapartida, cada píxel ocupa 4 bytes de memoria.
+
+\subsection{Compresión RLE}
+La compresión RLE es un mecanismo sencillo de compresión de imágenes sin pérdida. RLE comprime \emph{abreviando} píxeles consecutivos iguales como un único píxel y un contador de repeticiones. Por ello es un mecanismo muy eficaz para comprimir una imagen con regiones de un único color.
+
+\section{Formato de archivo TGA \emph{aligerado}}
+En esta sección se describirá el formato de archivo TGA para imágenes de 15,24 y 32 bits por píxel, con o sin compresión RLE, y centrándonos exclusivamente en la carga de la imágen, e ignorando la información de gamma y metadatos de texto que incluye el formato completo.
+
+\subsection{Formato de datos}
+Los datos que se especifican a continuación tienen el siguiente formato:
+\begin{itemize}
+\item \textbf{Byte} : valor de 8 bits
+\item \textbf{Short} : valor de 16 bits
+\item \textbf{Long} : valor de 32 bits
+\end{itemize}
+
+\subsection{Cabecera}
+\begin{enumerate}
+\item \textbf{ID Length (1 byte)} \newline
+Este campo indica el número de bytes contenidos en el campo 6, Image Id. Puede haber un máximo de 255 caracteres. Un valor de 0 indica que no hay campo de Image Id.
+
+\item \textbf{Color Map Type (1 byte)} \newline
+Este campo especifica si hay una paleta incluida en la imagen. Las imágenes true-color no usan paleta normalmente, pero a veces alguna aplicación utiliza esa sección del fichero. Este campo vale:
+	\begin{itemize}
+	\item 0 si no hay paleta incluida
+	\item 1 si hay paleta incluida
+	\end{itemize}
+
+\item \textbf{Image Type (1 byte)} \newline
+Este campo especifica el tipo de imagen. Los valores definidos son los siguientes:
+	\begin{itemize}
+	\item 0 : Sin imagen. El fichero no contiene una imagen, sólo cabeceras y metadatos.
+	\item 1 : Imagen sin comprimir, con paleta.
+	\item 2 : Imagen sin comprimir, de tipo true-color.
+	\item 3 : Imagen sin comprimir, blanco y negro.
+	\item 9 : Imagen comprimida mediante RLE, con paleta.
+	\item 10 : Imagen comprimida mediante RLE, de tipo true-color.
+	\item 11 : Imagen comprimida mediante RLE, blanco y negro.
+	\end{itemize}
+Nos interesan las imágenes de tipo 2 y 10: de true-color, comprimidas o no.
+
+\item \textbf{Color Map Specification (5 bytes)} \newline
+Este campo especifica información sobre la paleta. Como antes indicamos, las imágenes con paleta no nos interesan, por lo cual pasaremos casi \emph{por encima} este campo.
+Este campo se compone de los siguientes sub-campos:
+	\begin{enumerate}
+	\item \textbf{First Entry Index (2 bytes)} \newline
+	Índice de la primera entrada en la paleta.
+	\item \textbf{Color Map Length (2 bytes)} \newline
+	Número de entradas de paleta incluidas en el fichero.
+	\item \textbf{Color Map Entry Size (1 byte)} \newline
+	Número de bits por entrada de paleta.
+	\end{enumerate}
+
+\item \textbf{Especificación de la imagen (10 bytes)} \newline
+Este campo especifica información sobre la imagen. Está dividido en los siguientes sub-campos:
+	\begin{enumerate}
+	\item \textbf{X-Origin of image (2 bytes)} \newline
+	Especifica la coordenada horizontal absoluta de la esquina inferior izquierda de la imagen, teniendo el origen del sistema de coordenadas en la esquina inferior izquierda de la pantalla.
+	\item \textbf{Y-Origin of image (2 bytes)} \newline
+	Especifica la coordenada vertical absoluta de la esquina inferior izquierda de la imagen, teniendo el origen del sistema de coordenadas en la esquina inferior izquierda de la pantalla.
+	\item \textbf{Image Width (2 bytes)} \newline
+	Especifica el ancho de la imagen en píxeles.
+	\item \textbf{Image Height (2 bytes)} \newline
+	Especifica el alto de la imagen en píxeles.
+	\item \textbf{Pixel Depth (1 byte)} \newline
+	Especifica el número de bits por píxel, incluyendo canal alfa si lo hubiera. Valores comunes son 16, 24 o 32, pero se pueden utilizar otros formatos.
+	\item \textbf{Image Descriptor (1 byte)} \newline
+	Este byte está separado en subcampos:
+		\begin{itemize}
+		\item \textbf{Bits 3-0}: Especifica el número de bits por píxel destinados al canal alfa.
+		\item \textbf{Bits 5 y 4}: Especifica el origen de la imagen.
+		\item \textbf{Bits 7 y 6}: Tienen que ser 0 por razones de compatibilidad futura.
+		\end{itemize}
+	\end{enumerate}
+
+\end{enumerate}
+
+\subsection{Contenido}
+\begin{enumerate}
+\item \textbf{Image ID (tamaño variable)} \newline
+Este campo contiene información de identificación de la imagen. Su longitud está especificada por el campo ID Length, al principio del fichero. Si ID Length vale 0 entonces este campo no existe.
+
+\item \textbf{Color Map Data (tamaño variable)} \newline
+Este campo contiene la información de la paleta. Si Color Map Type vale 0, este campo no existe. La longitud de este campo es:
+
+$Color Map Entry Size * Color Map Length$
+
+\item \textbf{Image Data (Tamaño variable)} \newline
+Este campo contiene realmente la imagen. En él están (Image Width)*(Image Height) píxeles contenidos. Cada píxel en true-color está especificado, dependiendo de la profundidad de color, como:
+	\begin{itemize}
+	\item \textbf{16 bits}: ARRRRRGG GGGBBBBB, donde cada letra representa un bit. Debido al orden de almacenamiento de los bytes, realmente el primer byte leído del fichero será GGGBBBBB y el segundo ARRRRRGG.
+	\item \textbf{24 bits}: BBBBBBBB GGGGGGGG RRRRRRRR. Nótese el detalle de que en realidad se almacena como BGR y no RGB.
+	\item \textbf{32 bits}: BBBBBBBB GGGGGGGG RRRRRRRR AAAAAAAA. Nótese el detalle de que en realidad se almacena como BGRA y no RGBA.
+	\end{itemize}
+Dependiendo del tipo de compresión hay dos maneras principales de almacenamiento:
+	\begin{itemize}
+	\item \textbf{Sin compresión}: Los píxeles van uno detrás de otro, línea a línea. Image Data ocupa (Image Width)*(Image Height)*(Pixel Depth / 8) bytes.
+	\item \textbf{Compresión RLE}: Los píxeles se almacenan en bloques de dos tipos. Cada bloque comienza por un byte de cabecera y uno o más píxeles a continuación.
+		\begin{itemize}
+		\item \textbf{Bloque tipo RAW} \newline
+		El bloque RAW contiene píxeles no comprimibles. La cabecera se divide en dos partes:
+			\begin{itemize}
+			\item \textbf{Bit 7} : Vale 0 (sirve para identificar el bloque como tipo RAW)
+			\item \textbf{Bits 6-0} : Cuenta de píxeles
+			\end{itemize}
+		A la cabecera la siguen (Cuenta de píxeles + 1) píxeles. Como Cuenta de píxeles puede valer entre 0 y 127, realmente cada bloque RAW puede codificar desde 1 hasta 128 píxeles. Si se necesitan codificar más de 128 píxeles es necesario hacer varios bloques RAW.
+
+		\item \textbf{Bloque tipo RLE}
+		El bloque RLE contiene píxeles repetidos. La cabecera se divide en dos partes:
+			\begin{itemize}
+			\item \textbf{Bit 7} : Vale 1 (sirve para identificar el bloque como tipo RLE)
+			\item \textbf{Bits 6-0} : Cuenta de píxeles
+			\end{itemize}
+		A la cabecera la sigue 1 píxel, que es el píxel repetido. Este píxel será repetido (Cuenta de píxeles + 1)veces. Como Cuenta de píxeles puede valer entre 0 y 127, realmente cada bloque RLE puede codificar desde 1 hasta 128 píxeles repetidos. Si se necesitan codificar más de 128 píxeles es necesario hacer varios bloques RLE.
+		\end{itemize}
+	\end{itemize}
+
+
+
+\end{enumerate}
+
+
+
+
+\section{Formato TGA completo}
+En el directorio TGA de la documentación adjunta hay dos ficheros con una especificación del formato TGA más completa.
